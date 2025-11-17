@@ -14,14 +14,14 @@
 void make3Dhist(double target_b = -1.0, double tolerance = 0.1) {
 
     // 打开文件
-    TFile *f = TFile::Open("AuAu200_nucleons.root");
+    TFile *f = TFile::Open("pAu200_nucleons_1k.root");
     if (!f || f->IsZombie()) {
         printf("❌ Error: cannot open AuAu200_nucleons.root\n");
         return;
     }
 
     // 读取 ntuple
-    TNtuple *nt = (TNtuple*)f->Get("nt_Au_Au");
+    TNtuple *nt = (TNtuple*)f->Get("nt_p_Au");
     if (!nt) {
         printf("❌ Error: cannot find nt_Au_Au\n");
         return;
@@ -126,5 +126,5 @@ void make3Dhist(double target_b = -1.0, double tolerance = 0.1) {
     c1->Write("c1");
     out->Close();
 
-    printf("✅ 3D graphs for event #%d (b=%.2f fm) saved to nucleon_3d.root\n", selectedEvent, b);
+    printf("✅ 3D graphs for event #%d (b=%.2f fm) saved to pA200_nucleon_3d.root\n", selectedEvent, b);
 }
