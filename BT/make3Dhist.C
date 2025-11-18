@@ -100,7 +100,7 @@ void make3Dhist(double target_b = -1.0, double tolerance = 0.1) {
 
     // 坐标范围固定为 ±15 fm
     TH3F *frame = new TH3F("frame",
-        Form("Au+Au 200 GeV (b=%.2f fm);X [fm];Y [fm];Z [fm]", b),
+        Form("p+Au 200 GeV (b=%.2f fm);X [fm];Y [fm];Z [fm]", b),
         10, -15, 15,
         10, -15, 15,
         10, -15, 15);
@@ -118,7 +118,7 @@ void make3Dhist(double target_b = -1.0, double tolerance = 0.1) {
     legend->Draw();
 
     // 保存结果
-    TString outname = Form("nucleon_3d_b%.2f.root", b);
+    TString outname = Form("pA200_nucleon_3d_b%.2f.root", b);
     TFile *out = new TFile(outname, "RECREATE");
     gWounded->Write("gWounded");
     gSpectator->Write("gSpectator");
