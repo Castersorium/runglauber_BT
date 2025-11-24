@@ -6,5 +6,6 @@
         "readGlauberAA.C": "cpp",
         "readGlauberpA.C": "cpp",
         "readGlauberpA copy.C": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }
