@@ -4,6 +4,7 @@
         "make3Dhist.C": "cpp",
         "runglauber_v3.3.C": "cpp",
         "readGlauberAA.C": "cpp",
-        "readGlauberpA.C": "cpp"
+        "readGlauberpA.C": "cpp",
+        "readGlauberpA copy.C": "cpp"
     }
 }
