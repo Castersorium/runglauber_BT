@@ -13,24 +13,30 @@
 #include <iostream>
 
 
-void readGlauber() {
+void readGlauberpA() {
 
     // 1. 打开 TGlauber 输出文件
-    TFile *f = TFile::Open("pAu200_nucleons_1M.root");
+    TFile *f = TFile::Open("pAu200_nucleons_1k.root");
     if (!f || f->IsZombie()) { 
         std::cout << "❌ Cannot open file\n"; 
         return; 
     }
 
-   // 3. 参数设置
-   int Nevents = 50000;
-   double y_beam = 5.36; // AuAu 200 GeV beam rapidity
-   double lambda = 1.0;  // 指数分布参数: <Δy> = lambda
+    // 3. 参数设置
+    int Nevents = 1000;
+    double y_beam = 5.36; // AuAu 200 GeV beam rapidity
+    double lambda = 1.0;  // 指数分布参数: <Δy> = lambda
 
-   TH1F *h_dNdy = new TH1F("h_dNdy", "pA net-baryon rapidity; y; dN/dy", 100, -y_beam-10, y_beam+10);
-   TH1F *h_b = new TH1F("h_b", "impact parameter from pA; b; ", 100, 0, 20);
-   TH1F *h_Ncoll = new TH1F("h_Ncoll", "Ncoll from pA; Ncoll; ", 30, 0, 30);
-   TH1F *h_Npart = new TH1F("h_Npart", "Npart from pA; Npart; ", 30, 0, 30);
+    TFile* fout = new TFile("pA_rapidityloss.root", "RECREATE");
+
+    TH1F *h_dNdy = new TH1F("h_dNdy", "pA net-baryon rapidity; y; dN/dy", 100, -y_beam-10, y_beam+10);
+    TH1F *h_b = new TH1F("h_b", "impact parameter from pA; b; ", 100, 0, 20);
+    TH1F *h_Ncoll = new TH1F("h_Ncoll", "Ncoll from pA; Ncoll; ", 30, 0, 30);
+
+    TH1F *h_NcollA = new TH1F("h_NcollA", "NcollA from pA; NcollA; ", 30, 0, 30);
+    TH1F *h_NcollB = new TH1F("h_NcollB", "NcollB from pA; NcollB; ", 30, 0, 30);
+
+    TH1F *h_Npart = new TH1F("h_Npart", "Npart from pA; Npart; ", 30, 0, 30);
 
     // 读取 ntuple
     TNtuple *nt = (TNtuple*)f->Get("nt_p_Au");
@@ -47,6 +53,7 @@ void readGlauber() {
     for (int evt = 0; evt < Nevents; evt++) {
 
         nt->GetEntry(evt);
+
         TString arrname = Form("nucleonarray%d", evt);
         TObjArray *arr = (TObjArray*)f->Get(arrname);
 
@@ -59,7 +66,15 @@ void readGlauber() {
         // 4. 遍历核子
         for (int i=0;i<arr->GetEntriesFast();i++) {
             TGlauNucleon *nuc = (TGlauNucleon*)arr->At(i);
+
             if (!nuc) continue;
+
+            if (nuc->IsInNucleusA()) {
+                h_NcollA->Fill(nuc->GetNColl());
+            }
+            if (nuc->IsInNucleusB()) {
+                h_NcollB->Fill(nuc->GetNColl());
+            }
 
             int ncoll = nuc->GetNColl();  // TGlauberMC 提供
             double delta_y = 0;
@@ -85,13 +100,18 @@ void readGlauber() {
     }
 
     // 5. 绘图
-    TCanvas *c1 = new TCanvas("c1","pA net-baryon dN/dy",800,600);
-    
-    c1->Divide(2,1);
-    c1->cd(1);
-    h_Ncoll->Draw();
-    c1->cd(2);
-    h_Npart->Draw();
-    c1->SetGrid();
-    c1->Print("pA_NcollNpart.root");
+    //TCanvas *c1 = new TCanvas("c1","pA net-baryon dN/dy",800,600);
+    //
+    //c1->Divide(2,1);
+    //c1->cd(1);
+    //h_Ncoll->Draw();
+    //c1->cd(2);
+    //h_Npart->Draw();
+    //c1->SetGrid();
+    //c1->Print("pA_NcollNpart.root");
+
+    fout->Write();
+    fout->Close();
+
+
 }
