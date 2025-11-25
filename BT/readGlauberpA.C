@@ -76,6 +76,7 @@ void readGlauberpA() {
             //计算总 rapidity loss = A independent exponential collisions
             double delta_y_each = 0;
             double delta_y_total = 0;
+            //Random text
             double y_new = y_beam;
 
             for (int j = 0; j < ncoll; j++) {
