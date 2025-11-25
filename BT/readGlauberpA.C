@@ -17,19 +17,19 @@
 
 void readGlauberpA() {
 
-    TFile *f = TFile::Open("pAu200_nucleons_1k.root");
+    TFile *f = TFile::Open("pAu200_nucleons_1M.root");
     if (!f || f->IsZombie()) { 
         std::cout << "❌ Cannot open file\n"; 
         return; 
     }
 
-    int Nevents = 1000;
+    int Nevents = 50000;
     double y_beam = 5.36; 
     double lambda = 1.0;       
 
     TFile* fout = new TFile("pA_rapidityloss.root", "RECREATE");
 
-    TH1F *h_dNdy = new TH1F("h_dNdy", "Projectile rapidity; y; dN/dy", 200, -10, 10);
+    TH1F *h_dNdy = new TH1F("h_dNdy", "Projectile rapidity; y; dN/dy", 200, -15, 15);
     TH1F *h_NcollA = new TH1F("h_NcollA", "Ncoll of projectile; NcollA; ", 30, 0, 30);
     TH1F *h_NcollB = new TH1F("h_NcollB", "Ncoll of target; NcollB; ", 30, 0, 30);
 
@@ -86,6 +86,10 @@ void readGlauberpA() {
             h_dNdy->Fill(y_final);
             h2_DeltaY_Ncoll->Fill(ncoll, delta_y_total);
 
+        }
+        
+        if (evt % 5000 == 0){
+            std::cout << "Processed  " << evt << "#th events" << std::endl;
         }
 
     }
