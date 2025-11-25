@@ -15,9 +15,9 @@
 #include <iostream>
 
 
-void readGlauberpA() {
+void readGlauberpp() {
 
-    TFile *f = TFile::Open("pAu200_nucleons_1M.root");
+    TFile *f = TFile::Open("pp200_nucleons_1M.root");
     if (!f || f->IsZombie()) { 
         std::cout << "❌ Cannot open file\n"; 
         return; 
@@ -27,7 +27,7 @@ void readGlauberpA() {
     double y_beam = 5.36; 
     double lambda = 1.0;       
 
-    TFile* fout = new TFile("pA_rapidityloss.root", "RECREATE");
+    TFile* fout = new TFile("pp_rapidityloss.root", "RECREATE");
 
     TH1F *h_dNdy = new TH1F("h_dNdy", "Projectile rapidity; y; dN/dy", 200, -15, 15);
     TH1F *h_NcollA = new TH1F("h_NcollA", "Ncoll of projectile; NcollA; ", 30, 0, 30);
@@ -40,7 +40,7 @@ void readGlauberpA() {
         200, 0, 20       // Y: Δy
     );
 
-    TNtuple *nt = (TNtuple*)f->Get("nt_p_Au");
+    TNtuple *nt = (TNtuple*)f->Get("nt_p_p");
     float Npart, Ncoll, b;
     nt->SetBranchAddress("Npart", &Npart);
     nt->SetBranchAddress("Ncoll", &Ncoll);
@@ -74,24 +74,13 @@ void readGlauberpA() {
             if (ncoll == 0) continue;
 
             //计算总 rapidity loss = A independent exponential collisions
-            double delta_y_each = 0;
             double delta_y_total = 0;
-            double y_new = y_beam;
-
             for (int j = 0; j < ncoll; j++) {
-
-                //double lambda_eff = lambda * exp(-y_new);  
-
-                double delta_y_each = gRandom->Exp(lambda);  // 单次碰撞 rapidity loss
-
-                //cout << lambda_eff <<"  , "  <<  delta_y_each << endl;
-                delta_y_total += delta_y_each;
-
-                y_new -= delta_y_each;
+                delta_y_total += gRandom->Exp(lambda);  // 单次碰撞 rapidity loss
             }
 
             // projectile final rapidity
-            double y_final = y_new;
+            double y_final = y_beam - delta_y_total;
 
             // 一个 projectile nucleon 只填一次
             h_dNdy->Fill(y_final);

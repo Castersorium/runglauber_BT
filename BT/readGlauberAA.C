@@ -19,14 +19,14 @@
 void readGlauberAA() {
 
     // 1. 打开 TGlauber 输出文件
-    TFile *f = TFile::Open("AuAu200_nucleons_1k.root");
+    TFile *f = TFile::Open("AuAu200_nucleons_1M.root");
     if (!f || f->IsZombie()) { 
         std::cout << "❌ Cannot open file\n"; 
         return; 
     }
 
     // 3. 参数设置
-    int Nevents = 1000;
+    int Nevents = 50000;
     double y_beam = 5.36; // AuAu 200 GeV beam rapidity
     double lambda = 1.0;  // 指数分布参数: <Δy> = lambda
 
