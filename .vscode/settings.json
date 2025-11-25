@@ -5,7 +5,9 @@
         "runglauber_v3.3.C": "cpp",
         "readGlauberAA.C": "cpp",
         "readGlauberpA.C": "cpp",
-        "readGlauberpA copy.C": "cpp"
+        "readGlauberpA copy.C": "cpp",
+        "rapidityAA.C": "cpp",
+        "iostream": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

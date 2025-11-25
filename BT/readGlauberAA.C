@@ -3,10 +3,13 @@
 #include <TGraph2D.h>
 #include <TNtuple.h>
 #include <TCanvas.h>
+#include <TH2.h>
 #include <TH3F.h>
 #include <TLegend.h>
 #include <TSystem.h>
 #include <TROOT.h>
+#include <TRandom.h>
+#include <TGraph.h>
 #include <TRandom.h>
 
 #include <stdio.h>
@@ -29,12 +32,25 @@ void readGlauberAA() {
 
     TFile* fout = new TFile("AA_rapidityloss.root", "RECREATE");
 
-    TH1F *h_dNdy = new TH1F("h_dNdy", "AA net-baryon rapidity; y; dN/dy", 100, -y_beam-10, y_beam+10);
+    TH1F *h_dNdy = new TH1F("h_dNdy", "Particle rapidity; y; dN/dy", 100, -y_beam-12, y_beam+12);
+
+    TH1F *h_dNdyA = new TH1F("h_dNdyA", "Projectile rapidity; y; dN/dy", 100, -y_beam-10, y_beam+10);
+    TH1F *h_dNdyB = new TH1F("h_dNdyB", "Target rapidity; y; dN/dy", 100, -y_beam-10, y_beam+10);
+
     TH1F *h_b = new TH1F("h_b", "impact parameter from AA; b; ", 100, 0, 20);
     TH1F *h_Ncoll = new TH1F("h_Ncoll", "Ncoll from AA; Ncoll; ", 100, 0,1400);
+    TH1F *h_NcollA = new TH1F("h_NcollA", "Ncoll of projectile; NcollA; ", 30, 0, 30);
+    TH1F *h_NcollB = new TH1F("h_NcollB", "Ncoll of target; NcollB; ", 30, 0, 30);
 
-    TH1F *h_NcollA = new TH1F("h_NcollA", "NcollA from AA; NcollA; ", 30, 0, 30);
-    TH1F *h_NcollB = new TH1F("h_NcollB", "NcollB from AA; NcollB; ", 30, 0, 30);
+
+
+
+    TH2D *h2_DeltaY_Ncoll = new TH2D(
+        "h2_DeltaY_Ncoll",
+        "Rapidity loss vs Ncoll; Ncoll; #Delta y",
+        30, 0, 30,       // X: Ncoll
+        200, 0, 20       // Y: Δy
+    );
 
     TH1F *h_Npart = new TH1F("h_Npart", "Npart from AA; Npart; ", 100, 0, 400);
 
@@ -66,32 +82,42 @@ void readGlauberAA() {
         // 4. 遍历核子
         for (int i=0;i<arr->GetEntriesFast();i++) {
             TGlauNucleon *nuc = (TGlauNucleon*)arr->At(i);
-
             if (!nuc) continue;
-
-            if (nuc->IsInNucleusA()) {
-                h_NcollA->Fill(nuc->GetNColl());
+            
+            int ncoll = nuc->GetNColl();
+            if (ncoll == 0) continue;
+            
+            //计算总 rapidity loss = A independent exponential collisions
+            double delta_y_total = 0;
+            for (int j = 0; j < ncoll; j++) {
+                delta_y_total += gRandom->Exp(lambda);  // 单次碰撞 rapidity loss
             }
-            if (nuc->IsInNucleusB()) {
-                h_NcollB->Fill(nuc->GetNColl());
+            double y_final = 0;
+            
+            if(nuc->IsInNucleusA()){
+                h_NcollA->Fill(ncoll);
+        
+                // projectile final rapidity
+                y_final = y_beam - delta_y_total;
+                h_dNdyA->Fill(y_final);
+                
             }
 
-            int ncoll = nuc->GetNColl();  // TGlauberMC 提供
-            double delta_y = 0;
-
-            for (int j=0;j<ncoll;j++) {
-                delta_y += gRandom->Exp(lambda);
+            if (nuc->IsInNucleusB()){
+                h_NcollB->Fill(ncoll);
+                
+                // target final rapidity
+                y_final = -y_beam + delta_y_total;
+                h_dNdyB->Fill(y_final);
+                
             }
 
-            double y_final;
+            //// 若没有发生碰撞 → 它是 spectator，不产生 rapidity loss
+            //if (ncoll == 0) continue;
 
-            if (nuc->IsInNucleusB()) y_final = y_beam - delta_y;
-            else if (nuc->IsInNucleusA()) y_final = -y_beam + delta_y;
-            else y_final = 0; // 万一既不在 A 也不在 B
-
+            // 一个 projectile nucleon 只填一次
             h_dNdy->Fill(y_final);
-
-
+            h2_DeltaY_Ncoll->Fill(ncoll, delta_y_total);
         }
 
         if (evt % 5000 == 0){
@@ -99,16 +125,6 @@ void readGlauberAA() {
         }
     }
 
-    // 5. 绘图
-    //TCanvas *c1 = new TCanvas("c1","pA net-baryon dN/dy",800,600);
-    //
-    //c1->Divide(2,1);
-    //c1->cd(1);
-    //h_Ncoll->Draw();
-    //c1->cd(2);
-    //h_Npart->Draw();
-    //c1->SetGrid();
-    //c1->Print("pA_NcollNpart.root");
 
     fout->Write();
     fout->Close();
