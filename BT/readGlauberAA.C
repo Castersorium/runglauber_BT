@@ -93,7 +93,7 @@ void readGlauberAA() {
                 delta_y_total += gRandom->Exp(lambda);  // 单次碰撞 rapidity loss
             }
             double y_final = 0;
-            
+        
             if(nuc->IsInNucleusA()){
                 h_NcollA->Fill(ncoll);
         
