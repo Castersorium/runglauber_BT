@@ -17,15 +17,15 @@
 
 void readGlauberpA() {
 
-    TFile *f = TFile::Open("pAu200_nucleons_1M.root");
+    TFile *f = TFile::Open("pAu200_nucleons_1k.root");
     if (!f || f->IsZombie()) { 
         std::cout << "❌ Cannot open file\n"; 
         return; 
     }
 
-    int Nevents = 5000;
+    int Nevents = 1000;
     double y_beam = 5.36; 
-    double alpha = 5;  
+    double alpha = 3;  
 
     TRandom3 *rnd = new TRandom3(0);
 
@@ -96,6 +96,8 @@ void readGlauberpA() {
             // 一个 projectile nucleon 只填一次
             h_dNdy->Fill(y_final);
             h2_DeltaY_Ncoll->Fill(ncoll, delta_y_total);
+
+            // 如果你要你的结果compare with 实验的net-proton，那还要把nuclues的变化标出来，不然也是错的。
 
         }
         
