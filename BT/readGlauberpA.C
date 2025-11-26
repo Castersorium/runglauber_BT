@@ -25,7 +25,9 @@ void readGlauberpA() {
 
     int Nevents = 5000;
     double y_beam = 5.36; 
-    double lambda = 1.0;       
+    double alpha = 5;  
+
+    TRandom3 *rnd = new TRandom3(0);
 
     TFile* fout = new TFile("pA_rapidityloss.root", "RECREATE");
 
@@ -66,33 +68,30 @@ void readGlauberpA() {
                 h_NcollB->Fill(ncoll);
                 continue;
             }
-            //if (!nuc->IsInNucleusA()) continue;
 
             h_NcollA->Fill(ncoll);
 
-            // 若没有发生碰撞 → 它是 spectator，不产生 rapidity loss
-            if (ncoll == 0) continue;
+            if (ncoll == 0) continue; // Ignore spectators
 
             //计算总 rapidity loss = A independent exponential collisions
-            double delta_y_each = 0;
             double delta_y_total = 0;
-            //Random text
-            double y_new = y_beam;
 
-            for (int j = 0; j < ncoll; j++) {
+            double y_curr = y_beam;
 
-                //double lambda_eff = lambda * exp(-y_new);  
+            // First Collision (p+p)
+            double delta_y1 = rnd->Exp(1.0);
+            y_curr = y_curr - delta_y1;
+            delta_y_total = delta_y_total + delta_y1;
 
-                double delta_y_each = gRandom->Exp(lambda);  // 单次碰撞 rapidity loss
-
-                //cout << lambda_eff <<"  , "  <<  delta_y_each << endl;
-                delta_y_total += delta_y_each;
-
-                y_new -= delta_y_each;
+            //2nd~nth Collision (sequential)
+            for (int j = 1; j < ncoll; j++) {
+                double delta_yi = rnd->Exp(1.0 / alpha);
+                y_curr = y_curr - delta_yi;
+                delta_y_total = delta_y_total + delta_yi;
             }
 
             // projectile final rapidity
-            double y_final = y_new;
+            double y_final = y_curr;
 
             // 一个 projectile nucleon 只填一次
             h_dNdy->Fill(y_final);
