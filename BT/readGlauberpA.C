@@ -17,19 +17,19 @@
 
 void readGlauberpA() {
 
-    TFile *f = TFile::Open("pAu200_nucleons_1k.root");
+    TFile *f = TFile::Open("pAu200_nucleons_1M.root");
     if (!f || f->IsZombie()) { 
         std::cout << "❌ Cannot open file\n"; 
         return; 
     }
 
-    int Nevents = 1000;
+    int Nevents = 1000000;
     double y_beam = 5.36; 
-    double alpha = 3;  
+    double alpha = 3.0;  
 
     TRandom3 *rnd = new TRandom3(0);
 
-    TFile* fout = new TFile("pA_rapidityloss.root", "RECREATE");
+    TFile* fout = new TFile("pA_rapidityloss_b0-2fm.root", "RECREATE");
 
     TH1F *h_dNdy = new TH1F("h_dNdy", "Projectile rapidity; y; dN/dy", 200, -15, 15);
     TH1F *h_NcollA = new TH1F("h_NcollA", "Ncoll of projectile; NcollA; ", 30, 0, 30);
@@ -42,6 +42,13 @@ void readGlauberpA() {
         200, 0, 20       // Y: Δy
     );
 
+    TH2D *h2_dNdy_Ncoll = new TH2D(
+        "h2_dNdy_Ncoll",
+        "Projectile rapidity vs Ncoll; Ncoll; dN/dy",
+         30,  0, 30,       // X: Ncoll
+        200,-15, 15        // Y: dNdy
+    );
+
     TNtuple *nt = (TNtuple*)f->Get("nt_p_Au");
     float Npart, Ncoll, b;
     nt->SetBranchAddress("Npart", &Npart);
@@ -51,10 +58,13 @@ void readGlauberpA() {
     for (int evt = 0; evt < Nevents; evt++) {
 
         nt->GetEntry(evt);
+        if(b>2.0) continue;
 
         TString arrname = Form("nucleonarray%d", evt);
         TObjArray *arr = (TObjArray*)f->Get(arrname);
         if (!arr) continue;
+
+
 
         // Loop over nucleons
         for (int i=0; i<arr->GetEntriesFast(); i++) {
@@ -96,8 +106,9 @@ void readGlauberpA() {
             // 一个 projectile nucleon 只填一次
             h_dNdy->Fill(y_final);
             h2_DeltaY_Ncoll->Fill(ncoll, delta_y_total);
+            h2_dNdy_Ncoll->Fill(ncoll,y_final);
 
-            // 如果你要你的结果compare with 实验的net-proton，那还要把nuclues的变化标出来，不然也是错的。
+            // 如果要结果compare with 实验的net-proton，那还要把nuclues的变化标出来，不然也是错的。
 
         }
         
