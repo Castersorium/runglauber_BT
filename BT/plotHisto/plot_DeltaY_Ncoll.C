@@ -15,8 +15,8 @@ void plot_DeltaY_Ncoll()
     if(!h2) { printf("Histogram not found!\n"); return; }
 
     // ======== Make projections ========
-    projX = h2->ProjectionX("projX");
-    projY = h2->ProjectionY("projY");
+    auto projX = h2->ProjectionX("projX");
+    auto projY = h2->ProjectionY("projY");
 
     // ======== Canvas + Pads ========
     auto c1 = new TCanvas("c1", "DeltaY vs. Ncoll with projections", 1200, 1200);

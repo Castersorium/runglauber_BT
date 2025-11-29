@@ -7,7 +7,10 @@
         "readGlauberpA.C": "cpp",
         "readGlauberpA copy.C": "cpp",
         "rapidityAA.C": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "plot_DeltaY_Ncoll.C": "cpp",
+        "plot_dNdy_AB.C": "cpp",
+        "readGlauberpp.C": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
