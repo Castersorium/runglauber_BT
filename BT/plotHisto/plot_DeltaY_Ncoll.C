@@ -9,7 +9,7 @@ void plot_DeltaY_Ncoll()
     gStyle->SetOptStat(0);
 
     // ======== Load file ========
-    TFile *f = TFile::Open("pA_rapidityloss.root");
+    TFile *f = TFile::Open("../pA_rapidityloss.root");
     if(!f || f->IsZombie()) { printf("File error\n"); return; }
     h2 = (TH2D*) f->Get("h2_DeltaY_Ncoll");
     if(!h2) { printf("Histogram not found!\n"); return; }

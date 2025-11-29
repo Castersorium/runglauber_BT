@@ -1,7 +1,7 @@
 void plot_dNdy_AB() {
 
     // ===== Open file =====
-    TFile *f = TFile::Open("AA_rapidityloss.root");
+    TFile *f = TFile::Open("./AA_rapidityloss.root");
     if(!f || f->IsZombie()) {
         printf("Error: cannot open file AA_rapidityloss.root\n");
         return;
@@ -23,12 +23,21 @@ void plot_dNdy_AB() {
     TCanvas *c = new TCanvas("c", "dN/dy comparison", 900, 700);
     gStyle->SetOptStat(0);
 
+    Int_t ci = TColor::GetFreeColorIndex();
+    auto colorRed = new TColor(ci, 0.894, 0.145, 0.212);
+    auto colorBlue = new TColor(ci+1, 0.341, 0.565, 0.988);    
+
+
     // ===== Style Settings =====
     hA->SetLineColor(kRed);
+    hA->SetFillColor(ci);
     hA->SetLineWidth(2);
 
     hB->SetLineColor(kBlue);
+    hB->SetFillColor(ci+1);
     hB->SetLineWidth(2);
+
+
 
     hSum->SetLineColor(kBlack);
     hSum->SetLineWidth(3);
