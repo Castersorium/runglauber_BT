@@ -23,7 +23,7 @@ void readGlauberpp() {
         return; 
     }
 
-    int Nevents = 5000;
+    int Nevents = 100000;
     double y_beam = 5.36; 
     double lambda = 1.0;       
 
