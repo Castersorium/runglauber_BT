@@ -26,13 +26,13 @@ void readGlauberAA() {
     }
 
     // 3. 参数设置
-    int Nevents = 100000;
+    int Nevents = 50000;
     double y_beam = 5.36; // AuAu 200 GeV beam rapidity
     double alpha = 3.0;  
 
     TRandom3 *rnd = new TRandom3(0);
 
-    TFile* fout = new TFile("AA_rapidityloss_02.root", "RECREATE");
+    TFile* fout = new TFile("AA_rapidityloss_0100pCen.root", "RECREATE");
 
     TH1F *h_dNdy = new TH1F("h_dNdy", "Particle rapidity; y; dN/dy", 100, -y_beam-12, y_beam+12);
 
@@ -80,7 +80,7 @@ void readGlauberAA() {
             std::cout << "Processing  " << evt << "#th events" << std::endl;
         }
         nt->GetEntry(evt);
-        if(b>2.21) continue; // 0~5% 10.1103/PhysRevC.79.034909
+        //if(b>3.31) continue; // 0~5% 10.1103/PhysRevC.79.034909
 
         TString arrname = Form("nucleonarray%d", evt);
         TObjArray *arr = (TObjArray*)f->Get(arrname);
