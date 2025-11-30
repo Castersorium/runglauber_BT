@@ -23,7 +23,7 @@ void readGlauberpp() {
         return; 
     }
 
-    int Nevents = 100000;
+    int Nevents = 10000;
     double y_beam = 5.36; 
     double lambda = 1.0;       
 
@@ -32,6 +32,7 @@ void readGlauberpp() {
     TH1F *h_dNdy = new TH1F("h_dNdy", "Projectile rapidity; y; dN/dy", 200, -15, 15);
     TH1F *h_NcollA = new TH1F("h_NcollA", "Ncoll of projectile; NcollA; ", 30, 0, 30);
     TH1F *h_NcollB = new TH1F("h_NcollB", "Ncoll of target; NcollB; ", 30, 0, 30);
+    TH1F *h_b = new TH1F("h_b","h_b",20,0,1.5);
 
     TH2D *h2_DeltaY_Ncoll = new TH2D(
         "h2_DeltaY_Ncoll",
@@ -49,7 +50,7 @@ void readGlauberpp() {
     for (int evt = 0; evt < Nevents; evt++) {
 
         nt->GetEntry(evt);
-
+        
         TString arrname = Form("nucleonarray%d", evt);
         TObjArray *arr = (TObjArray*)f->Get(arrname);
         if (!arr) continue;
@@ -88,8 +89,11 @@ void readGlauberpp() {
 
         }
         
-        if (evt % 5000 == 0){
+        h_b->Fill(b);
+        
+        if (evt % 1000 == 0){
             std::cout << "Processed  " << evt << "#th events" << std::endl;
+            //cout << b << endl;
         }
 
     }
