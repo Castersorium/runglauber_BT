@@ -55,6 +55,7 @@ void readGlauberpA() {
     nt->SetBranchAddress("Ncoll", &Ncoll);
     nt->SetBranchAddress("B", &b);
 
+    // Loop over event
     for (int evt = 0; evt < Nevents; evt++) {
 
         nt->GetEntry(evt);
@@ -72,6 +73,7 @@ void readGlauberpA() {
             if (!nuc) continue;
 
             int ncoll = nuc->GetNColl();
+            if (ncoll == 0) continue; // Ignore spectators
 
             // 只处理 projectile nucleon (In pA, A = proton)
             if (nuc->IsInNucleusB()){
@@ -81,11 +83,9 @@ void readGlauberpA() {
 
             h_NcollA->Fill(ncoll);
 
-            if (ncoll == 0) continue; // Ignore spectators
 
             //计算总 rapidity loss = A independent exponential collisions
             double delta_y_total = 0;
-
             double y_curr = y_beam;
 
             // First Collision (p+p)
@@ -103,12 +103,12 @@ void readGlauberpA() {
             // projectile final rapidity
             double y_final = y_curr;
 
-            // 一个 projectile nucleon 只填一次
+
             h_dNdy->Fill(y_final);
             h2_DeltaY_Ncoll->Fill(ncoll, delta_y_total);
             h2_dNdy_Ncoll->Fill(ncoll,y_final);
 
-            // 如果要结果compare with 实验的net-proton，那还要把nuclues的变化标出来，不然也是错的。
+            // XZ:如果要结果compare with 实验的net-proton，那还要把nuclues的变化标出来，不然也是错的。
 
         }
         

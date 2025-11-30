@@ -26,11 +26,13 @@ void readGlauberAA() {
     }
 
     // 3. 参数设置
-    int Nevents = 50000;
+    int Nevents = 100000;
     double y_beam = 5.36; // AuAu 200 GeV beam rapidity
-    double lambda = 1.0;  // 指数分布参数: <Δy> = lambda
+    double alpha = 3.0;  
 
-    TFile* fout = new TFile("AA_rapidityloss.root", "RECREATE");
+    TRandom3 *rnd = new TRandom3(0);
+
+    TFile* fout = new TFile("AA_rapidityloss_02.root", "RECREATE");
 
     TH1F *h_dNdy = new TH1F("h_dNdy", "Particle rapidity; y; dN/dy", 100, -y_beam-12, y_beam+12);
 
@@ -43,14 +45,20 @@ void readGlauberAA() {
     TH1F *h_NcollB = new TH1F("h_NcollB", "Ncoll of target; NcollB; ", 30, 0, 30);
 
 
-
-
     TH2D *h2_DeltaY_Ncoll = new TH2D(
         "h2_DeltaY_Ncoll",
         "Rapidity loss vs Ncoll; Ncoll; #Delta y",
         30, 0, 30,       // X: Ncoll
         200, 0, 20       // Y: Δy
     );
+
+    TH2D *h2_dNdy_Ncoll = new TH2D(
+        "h2_dNdy_Ncoll",
+        "Projectile rapidity vs Ncoll; Ncoll; dN/dy",
+         30,  0, 30,       // X: Ncoll
+        200,-15, 15        // Y: dNdy
+    );
+
 
     TH1F *h_Npart = new TH1F("h_Npart", "Npart from AA; Npart; ", 100, 0, 400);
 
@@ -65,10 +73,14 @@ void readGlauberAA() {
     nt->SetBranchAddress("Ncoll", &Ncoll);
     nt->SetBranchAddress("B", &b);
 
-    // 2. 选择事件
+    // Loop over event
     for (int evt = 0; evt < Nevents; evt++) {
 
+        if (evt % 5000 == 0){
+            std::cout << "Processing  " << evt << "#th events" << std::endl;
+        }
         nt->GetEntry(evt);
+        if(b>2.21) continue; // 0~5% 10.1103/PhysRevC.79.034909
 
         TString arrname = Form("nucleonarray%d", evt);
         TObjArray *arr = (TObjArray*)f->Get(arrname);
@@ -79,52 +91,65 @@ void readGlauberAA() {
 
         if (!arr) { std::cout << "❌ Cannot find " << arrname << std::endl; return; }       
 
-        // 4. 遍历核子
+        // Loop over nucleons
         for (int i=0;i<arr->GetEntriesFast();i++) {
             TGlauNucleon *nuc = (TGlauNucleon*)arr->At(i);
             if (!nuc) continue;
             
             int ncoll = nuc->GetNColl();
             if (ncoll == 0) continue;
-            
-            //计算总 rapidity loss = A independent exponential collisions
+
             double delta_y_total = 0;
-            for (int j = 0; j < ncoll; j++) {
-                delta_y_total += gRandom->Exp(lambda);  // 单次碰撞 rapidity loss
-            }
-            double y_final = 0;
-        
+            double y_curr = y_beam;
+
+            // First Collision (p+p)
+            double delta_y1 = rnd->Exp(1.0);
+            delta_y_total = delta_y_total + delta_y1;
+
             if(nuc->IsInNucleusA()){
-                h_NcollA->Fill(ncoll);
-        
-                // projectile final rapidity
-                y_final = y_beam - delta_y_total;
-                h_dNdyA->Fill(y_final);
-                
+                h_NcollA->Fill(ncoll);        
+                // projectile first rapidity
+                y_curr = y_curr - delta_y1;            
             }
 
             if (nuc->IsInNucleusB()){
-                h_NcollB->Fill(ncoll);
-                
-                // target final rapidity
-                y_final = -y_beam + delta_y_total;
-                h_dNdyB->Fill(y_final);
-                
+                h_NcollB->Fill(ncoll);                
+                // target first rapidity
+                y_curr = -y_curr + delta_y1;           
             }
 
-            //// 若没有发生碰撞 → 它是 spectator，不产生 rapidity loss
-            //if (ncoll == 0) continue;
+            //2nd~nth Collision (sequential)
+            for (int j = 1; j < ncoll; j++) {
+                double delta_yi = rnd->Exp(1.0 / alpha);
+                if(nuc->IsInNucleusA()){        
+                    // projectile sequential rapidity
+                    y_curr = y_curr - delta_yi;              
+                }
+    
+                if (nuc->IsInNucleusB()){              
+                    // target sequential rapidity
+                    y_curr = y_curr + delta_yi; // Dont need to flip second time              
+                }
 
-            // 一个 projectile nucleon 只填一次
+                delta_y_total = delta_y_total + delta_yi;
+            }
+
+            double y_final = y_curr;
+
             h_dNdy->Fill(y_final);
+            if(nuc->IsInNucleusA()){        
+                h_dNdyA->Fill(y_final);                
+            }
+
+            if (nuc->IsInNucleusB()){              
+                h_dNdyB->Fill(y_final);                
+            }
             h2_DeltaY_Ncoll->Fill(ncoll, delta_y_total);
+            h2_dNdy_Ncoll->Fill(ncoll,y_final);
         }
 
-        if (evt % 5000 == 0){
-            std::cout << "Processed  " << evt << "#th events" << std::endl;
-        }
+
     }
-
 
     fout->Write();
     fout->Close();
