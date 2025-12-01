@@ -23,15 +23,17 @@ void readGlauberpA() {
         return; 
     }
 
-    int Nevents = 1000000;
+    int Nevents = 50000;
     double y_beam = 5.36; 
     double alpha = 3.0;  
 
     TRandom3 *rnd = new TRandom3(0);
 
-    TFile* fout = new TFile("pA_rapidityloss_b0-2fm.root", "RECREATE");
+    TFile* fout = new TFile("pA_rapidityloss_test.root", "RECREATE");
 
     TH1F *h_dNdy = new TH1F("h_dNdy", "Projectile rapidity; y; dN/dy", 200, -15, 15);
+    TH1F *h_b = new TH1F("h_b", "impact parameter from pA; b; ", 100, 0, 20);
+
     TH1F *h_NcollA = new TH1F("h_NcollA", "Ncoll of projectile; NcollA; ", 30, 0, 30);
     TH1F *h_NcollB = new TH1F("h_NcollB", "Ncoll of target; NcollB; ", 30, 0, 30);
 
@@ -59,7 +61,8 @@ void readGlauberpA() {
     for (int evt = 0; evt < Nevents; evt++) {
 
         nt->GetEntry(evt);
-        if(b>2.0) continue;
+        //if(b>2.0) continue;
+        h_b->Fill(b);
 
         TString arrname = Form("nucleonarray%d", evt);
         TObjArray *arr = (TObjArray*)f->Get(arrname);
