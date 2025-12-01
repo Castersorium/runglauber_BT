@@ -21,10 +21,10 @@ runAndSaveNucleons(1000, "p", "p", 42.0, 0.0, 0.4, 0, 0.0, 5.0, "pp200_nucleons_
 root readGlauberpA.C
 ```
 
-### Naming Scheme
-
-1. Data generated: `<System><Energy>_nucleons_<events>.root`
-2. Rapidity assigned:`<System><Energy>_rapidityloss_<centrality>.root`
+> [!TIP]
+> **Naming Scheme**
+> - Data generated: `<System><Energy>_nucleons_<events>.root`
+> - Rapidity assigned:`<System><Energy>_rapidityloss_<centrality>.root`
 
 ## Analyis
 
