@@ -23,13 +23,13 @@ void readGlauberpA() {
         return; 
     }
 
-    int Nevents = 50000;
+    int Nevents = 100000;
     double y_beam = 5.36; 
     double alpha = 3.0;  
 
     TRandom3 *rnd = new TRandom3(0);
 
-    TFile* fout = new TFile("pA_rapidityloss_test.root", "RECREATE");
+    TFile* fout = new TFile("pA_rapidityloss_MB.root", "RECREATE");
 
     TH1F *h_dNdy = new TH1F("h_dNdy", "Projectile rapidity; y; dN/dy", 200, -15, 15);
     TH1F *h_b = new TH1F("h_b", "impact parameter from pA; b; ", 100, 0, 20);
@@ -50,11 +50,19 @@ void readGlauberpA() {
          30,  0, 30,       // X: Ncoll
         200,-15, 15        // Y: dNdy
     );
-
+    
+    TH2D *h2_b_NcollA = new TH2D(
+        "h2_b_NcollA",
+        "impact parameter vs NcollA; NcollA; b[fm]",
+         30,  0, 30,       // X: Ncoll
+         100, 0, 20        // Y: b
+    );
+    
+    
     TNtuple *nt = (TNtuple*)f->Get("nt_p_Au");
-    float Npart, Ncoll, b;
-    nt->SetBranchAddress("Npart", &Npart);
-    nt->SetBranchAddress("Ncoll", &Ncoll);
+    float Npart_tree, Ncoll_tree, b;
+    nt->SetBranchAddress("Npart", &Npart_tree);
+    nt->SetBranchAddress("Ncoll", &Ncoll_tree);
     nt->SetBranchAddress("B", &b);
 
     // Loop over event
@@ -76,6 +84,9 @@ void readGlauberpA() {
             if (!nuc) continue;
 
             int ncoll = nuc->GetNColl();
+
+            
+            
             if (ncoll == 0) continue; // Ignore spectators
 
             // 只处理 projectile nucleon (In pA, A = proton)
@@ -85,6 +96,7 @@ void readGlauberpA() {
             }
 
             h_NcollA->Fill(ncoll);
+            h2_b_NcollA->Fill(ncoll,b);
 
 
             //计算总 rapidity loss = A independent exponential collisions
@@ -110,6 +122,8 @@ void readGlauberpA() {
             h_dNdy->Fill(y_final);
             h2_DeltaY_Ncoll->Fill(ncoll, delta_y_total);
             h2_dNdy_Ncoll->Fill(ncoll,y_final);
+
+
 
             // XZ:如果要结果compare with 实验的net-proton，那还要把nuclues的变化标出来，不然也是错的。
 

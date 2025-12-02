@@ -59,6 +59,19 @@ void readGlauberAA() {
         200,-15, 15        // Y: dNdy
     );
 
+    TH2D *h2_b_Ncoll = new TH2D(
+        "h2_b_Ncoll",
+        "impact parameter vs Ncoll; Ncoll; b[fm]",
+        100, 0,1400,       // X: Ncoll
+        100, 0, 20        // Y: b
+    );
+    TH2D *h2_b_NcollA = new TH2D(
+        "h2_b_NcollA",
+        "impact parameter vs NcollA; NcollA; b[fm]",
+        30,  0, 30,       // X: NcollA
+        100, 0, 20        // Y: b
+    );
+    
 
     TH1F *h_Npart = new TH1F("h_Npart", "Npart from AA; Npart; ", 100, 0, 400);
 
@@ -68,9 +81,9 @@ void readGlauberAA() {
         printf("❌ Error: cannot find nt_Au_Au\n");
         return;
     }
-    float Npart, Ncoll, b;
-    nt->SetBranchAddress("Npart", &Npart);
-    nt->SetBranchAddress("Ncoll", &Ncoll);
+    float Npart_tree, Ncoll_tree, b;
+    nt->SetBranchAddress("Npart", &Npart_tree);
+    nt->SetBranchAddress("Ncoll", &Ncoll_tree);
     nt->SetBranchAddress("B", &b);
 
     // Loop over event
@@ -86,8 +99,10 @@ void readGlauberAA() {
         TObjArray *arr = (TObjArray*)f->Get(arrname);
 
         h_b->Fill(b);
-        h_Ncoll->Fill(Ncoll);
-        h_Npart->Fill(Npart);
+        h_Ncoll->Fill(Ncoll_tree);
+        h_Npart->Fill(Npart_tree);
+
+        h2_b_Ncoll->Fill(Ncoll_tree,b);
 
         if (!arr) { std::cout << "❌ Cannot find " << arrname << std::endl; return; }       
 
@@ -97,6 +112,7 @@ void readGlauberAA() {
             if (!nuc) continue;
             
             int ncoll = nuc->GetNColl();
+            h2_b_NcollA->Fill(ncoll,b);
             if (ncoll == 0) continue;
 
             double delta_y_total = 0;

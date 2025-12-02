@@ -31,7 +31,7 @@ root readGlauberpA.C
 - Goto `JupyNotes/`
 
 ## Reference
-1. [Own Obsidian](obsidian://open?vault=Cerebrum%20extra&file=4%20-%20Workflows%2FTech%20Notes%2FTGlauberMC%20Model%20Usage)
+1. [My Own Obsidian][obsidian://open?vault=Cerebrum%20extra&file=4%20-%20Workflows%2FTech%20Notes%2FTGlauberMC%20Model%20Usage]
 2. https://tglaubermc.web.cern.ch/html/runglauber__v3_83_8C_source.html
 
 
