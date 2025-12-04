@@ -32,7 +32,7 @@ void readGlauberAA() {
 
     TRandom3 *rnd = new TRandom3(0);
 
-    TFile* fout = new TFile("AA_rapidityloss_0100pCen.root", "RECREATE");
+    TFile* fout = new TFile("AA_rapidityloss_0100pCen_a3.root", "RECREATE");
 
     TH1F *h_dNdy = new TH1F("h_dNdy", "Particle rapidity; y; dN/dy", 100, -y_beam-12, y_beam+12);
 
