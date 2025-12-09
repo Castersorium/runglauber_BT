@@ -28,11 +28,11 @@ void readGlauberAA() {
     // 3. 参数设置
     int Nevents = 50000;
     double y_beam = 5.36; // AuAu 200 GeV beam rapidity
-    double alpha = 3.0;  
+    double alpha = 0.64;  
 
     TRandom3 *rnd = new TRandom3(0);
 
-    TFile* fout = new TFile("AA_rapidityloss_0100pCen_a3.root", "RECREATE");
+    TFile* fout = new TFile("AA_rapidityloss_0100pCen_a064.root", "RECREATE");
 
     TH1F *h_dNdy = new TH1F("h_dNdy", "Particle rapidity; y; dN/dy", 100, -y_beam-12, y_beam+12);
 
