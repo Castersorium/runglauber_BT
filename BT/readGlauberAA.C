@@ -26,18 +26,22 @@ void readGlauberAA() {
     }
 
     // 3. 参数设置
-    int Nevents = 50000;
+    int Read_TotNevents = 50000;
     double y_beam = 5.36; // AuAu 200 GeV beam rapidity
-    double alpha = 0.64;  
+    double alpha = 2.9;  
+    double NScale = 0.25;
+
+    double Npart_cut_up  = 357+8;
+    double Npart_cut_low = 357-8;
 
     TRandom3 *rnd = new TRandom3(0);
 
-    TFile* fout = new TFile("AA_rapidityloss_0100pCen_a064.root", "RECREATE");
+    TFile* fout = new TFile("AA_rapidityloss_05pCen_a2p9.root", "RECREATE");
 
-    TH1F *h_dNdy = new TH1F("h_dNdy", "Particle rapidity; y; dN/dy", 100, -y_beam-12, y_beam+12);
+    TH1F *h_dNdy  = new TH1F("h_dNdy", "Particle rapidity; y; dN/dy"   , 500, -y_beam-12, y_beam+12);
 
-    TH1F *h_dNdyA = new TH1F("h_dNdyA", "Projectile rapidity; y; dN/dy", 100, -y_beam-10, y_beam+10);
-    TH1F *h_dNdyB = new TH1F("h_dNdyB", "Target rapidity; y; dN/dy", 100, -y_beam-10, y_beam+10);
+    TH1F *h_dNdyA = new TH1F("h_dNdyA", "Projectile rapidity; y; dN/dy", 500, -y_beam-10, y_beam+10);
+    TH1F *h_dNdyB = new TH1F("h_dNdyB", "Target rapidity; y; dN/dy"    , 500, -y_beam-10, y_beam+10);
 
     TH1F *h_b = new TH1F("h_b", "impact parameter from AA; b; ", 100, 0, 20);
     TH1F *h_Ncoll = new TH1F("h_Ncoll", "Ncoll from AA; Ncoll; ", 100, 0,1400);
@@ -87,14 +91,14 @@ void readGlauberAA() {
     nt->SetBranchAddress("B", &b);
 
     // Loop over event
-    for (int evt = 0; evt < Nevents; evt++) {
+    for (int evt = 0; evt < Read_TotNevents; evt++) {
 
         if (evt % 5000 == 0){
             std::cout << "Processing  " << evt << "#th events" << std::endl;
         }
         nt->GetEntry(evt);
         //if(b>3.31) continue; // 0~5% 10.1103/PhysRevC.79.034909
-
+        if((Npart_tree>Npart_cut_up) || (Npart_tree<Npart_cut_low)) continue;
         TString arrname = Form("nucleonarray%d", evt);
         TObjArray *arr = (TObjArray*)f->Get(arrname);
 
@@ -160,13 +164,24 @@ void readGlauberAA() {
             if (nuc->IsInNucleusB()){              
                 h_dNdyB->Fill(y_final);                
             }
+
             h2_DeltaY_Ncoll->Fill(ncoll, delta_y_total);
             h2_dNdy_Ncoll->Fill(ncoll,y_final);
         }
 
-
+        
     }
+    int NeventsSaved = h_Npart->GetEntries();
 
+    h_dNdy ->Scale(NScale * 1.0 / NeventsSaved);
+    h_dNdyA->Scale(NScale * 1.0 / NeventsSaved);
+    h_dNdyB->Scale(NScale * 1.0 / NeventsSaved);
+
+    h_dNdy ->Scale(1.0, "width");
+    h_dNdyA->Scale(1.0, "width");
+    h_dNdyB->Scale(1.0, "width");
+
+    
     fout->Write();
     fout->Close();
 
