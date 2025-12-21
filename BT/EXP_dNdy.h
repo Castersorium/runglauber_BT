@@ -42,24 +42,59 @@ const std::vector<dNdyPoint> BRAHMS_AuAu_200GeV_005_netP = {
 
 // STAR Au+Au, |y|<0.1, net-proton, dN/dy/(0.5*Npart)  10.1103/PhysRevC.96.044904
 
+// const std::vector<dNdyPoint> STAR_AuAu_7p7GeV_005_netP_05Npart = {
+//     { 0.0, -0.1, 0.1, 0.32344, 0.00040, 0.0360 }
+// };
+
+// const std::vector<dNdyPoint> STAR_AuAu_11p5GeV_005_netP_05Npart = {
+//     { 0.0, -0.1, 0.1, 0.2516, 0.00032, 0.0313 }
+// };
+
+// const std::vector<dNdyPoint> STAR_AuAu_19p6GeV_005_netP_05Npart = {
+//     { 0.0, -0.1, 0.1, 0.1779, 0.00014, 0.0266 }
+// };
+
+// const std::vector<dNdyPoint> STAR_AuAu_27GeV_005_netP_05Npart = {
+//     { 0.0, -0.1, 0.1, 0.1499, 0.00014, 0.0226 }
+// };
+
+// const std::vector<dNdyPoint> STAR_AuAu_39GeV_005_netP_05Npart = {
+//     { 0.0, -0.1, 0.1, 0.1054, 0.00011, 0.0181 }
+// };
+
 const std::vector<dNdyPoint> STAR_AuAu_7p7GeV_005_netP = {
-    { 0.0, -0.1, 0.1, 0.32344, 0.00040, 0.0360 }
+    {0.0, -0.1, 0.1, 54.51, 6.100, 0.0}
 };
 
 const std::vector<dNdyPoint> STAR_AuAu_11p5GeV_005_netP = {
-    { 0.0, -0.1, 0.1, 0.2516, 0.00032, 0.0313 }
+    {0.0, -0.1, 0.1, 42.5, 5.304, 0.0}
 };
 
 const std::vector<dNdyPoint> STAR_AuAu_19p6GeV_005_netP = {
-    { 0.0, -0.1, 0.1, 0.1779, 0.00014, 0.0266 }
+    {0.0, -0.1, 0.1, 30.0, 4.528, 0.0}
 };
 
 const std::vector<dNdyPoint> STAR_AuAu_27GeV_005_netP = {
-    { 0.0, -0.1, 0.1, 0.1499, 0.00014, 0.0226 }
+    {0.0, -0.1, 0.1, 25.7, 3.864, 0.0}
 };
 
 const std::vector<dNdyPoint> STAR_AuAu_39GeV_005_netP = {
-    { 0.0, -0.1, 0.1, 0.1054, 0.00011, 0.0181 }
+    {0.0, -0.1, 0.1, 18.0, 3.068, 0.0}
+};
+
+
+// STAR Au+Au, |y|<0.1, dN/dy, 10.1103/PhysRevC.79.034909
+// errors are the quadratic sum of statistical and systematic uncertainties, and are dominated by the latter
+const std::vector<dNdyPoint> STAR_AuAu_62p4GeV_005_netP = {
+    { 0.0, -0.1, 0.1, 15.4, 0.000, 2.1 }
+};
+
+const std::vector<dNdyPoint> STAR_AuAu_130GeV_005_netP = {
+    { 0.0, -0.1, 0.1, 8.24, 0.000, 0.93}
+};
+
+const std::vector<dNdyPoint> STAR_AuAu_200GeV_005_netP = {
+    { 0.0, -0.1, 0.1, 8.0, 0.000, 1.8 }
 };
 
 

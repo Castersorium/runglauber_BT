@@ -46,7 +46,7 @@ TGraphErrors* makeGraphError(
 void readGlauberAA() {
 
     // 1. 打开 TGlauber 输出文件
-    TFile *f = TFile::Open("AuAu62p4_nucleons_1M.root");
+    TFile *f = TFile::Open("AuAu62p4_nucleons_1k.root");
     if (!f || f->IsZombie()) { 
         std::cout << "❌ Cannot open file\n"; 
         return; 
@@ -61,8 +61,8 @@ void readGlauberAA() {
     // double NScale = 1.0/3.5;
 
     double y_beam = 4.2; // AuAu 62.4 GeV beam rapidity
-    double Npart_cut_up  = 314+8;
-    double Npart_cut_low = 314-8;
+    double Npart_cut_up  = 346.5+2.8;//314+8;
+    double Npart_cut_low = 346.5-2.8;//314-8;
     double alpha = 3.0;  
     double NScale = 1.0/3.5;
 
@@ -216,9 +216,13 @@ void readGlauberAA() {
 
     TGraphErrors* gr_BRAHMS_62p4GeV_netP =  makeGraphError(BRAHMS_AuAu_62p4GeV_010_netP,  "BRAHMS_AuAu_62p4GeV_010_netP");
     TGraphErrors* gr_BRAHMS_200GeV_netP  =  makeGraphError(BRAHMS_AuAu_200GeV_005_netP ,  "BRAHMS_AuAu_200GeV_005_netP");
+    TGraphErrors* gr_STAR_62p4GeV_netP  =  makeGraphError(STAR_AuAu_62p4GeV_005_netP ,  "STAR_AuAu_62p4GeV_005_netP");
+    TGraphErrors* gr_STAR_200GeV_netP  =  makeGraphError(STAR_AuAu_200GeV_005_netP ,  "STAR_AuAu_200GeV_005_netP");
+
     gr_BRAHMS_62p4GeV_netP->Write();
     gr_BRAHMS_200GeV_netP->Write();
-    
+    gr_STAR_62p4GeV_netP->Write();
+    gr_STAR_200GeV_netP->Write();
     fout->Write();
     fout->Close();
 
