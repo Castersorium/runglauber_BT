@@ -28,11 +28,11 @@ void readGlauberAA() {
     // 3. 参数设置
     int Read_TotNevents = 50000;
     double y_beam = 5.36; // AuAu 200 GeV beam rapidity
-    double alpha = 2.9;  
-    double NScale = 0.25;
-
     double Npart_cut_up  = 357+8;
     double Npart_cut_low = 357-8;
+
+    double alpha = 2.9;  
+    double NScale = 0.25;
 
     TRandom3 *rnd = new TRandom3(0);
 
