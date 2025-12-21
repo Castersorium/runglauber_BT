@@ -11,15 +11,42 @@
 #include <TRandom.h>
 #include <TGraph.h>
 #include <TRandom.h>
+#include <TGraphErrors.h>
 
 #include <stdio.h>
 #include <iostream>
 
+#include "EXP_dNdy.h"
+
+TGraphErrors* makeGraphError(
+    const std::vector<dNdyPoint>& data,
+    const char* title
+) {
+    int n = data.size();
+    auto* gr = new TGraphErrors(n);
+    gr->SetName(title);
+    gr->SetTitle(title);
+
+    for (int i = 0; i < n; ++i) {
+        double y  = data[i].y;
+        double dy = 0.5 * (data[i].y_high - data[i].y_low);
+
+        double val = data[i].value;
+        double err = std::sqrt(
+            data[i].stat_err * data[i].stat_err +
+            data[i].sys_err  * data[i].sys_err
+        );
+
+        gr->SetPoint(i, y, val);
+        gr->SetPointError(i, dy, err);
+    }
+    return gr;
+}
 
 void readGlauberAA() {
 
     // 1. 打开 TGlauber 输出文件
-    TFile *f = TFile::Open("AuAu200_nucleons_1M.root");
+    TFile *f = TFile::Open("AuAu62p4_nucleons_1M.root");
     if (!f || f->IsZombie()) { 
         std::cout << "❌ Cannot open file\n"; 
         return; 
@@ -27,16 +54,21 @@ void readGlauberAA() {
 
     // 3. 参数设置
     int Read_TotNevents = 50000;
-    double y_beam = 5.36; // AuAu 200 GeV beam rapidity
-    double Npart_cut_up  = 357+8;
-    double Npart_cut_low = 357-8;
+    // double y_beam = 5.36; // AuAu 200 GeV beam rapidity
+    // double Npart_cut_up  = 357+8;
+    // double Npart_cut_low = 357-8;
+    // double alpha = 3.0;  
+    // double NScale = 1.0/3.5;
 
-    double alpha = 2.9;  
-    double NScale = 0.25;
+    double y_beam = 4.2; // AuAu 62.4 GeV beam rapidity
+    double Npart_cut_up  = 314+8;
+    double Npart_cut_low = 314-8;
+    double alpha = 3.0;  
+    double NScale = 1.0/3.5;
 
-    TRandom3 *rnd = new TRandom3(0);
+    TRandom3 *rnd = new TRandom3(0); 
 
-    TFile* fout = new TFile("AA_rapidityloss_05pCen_a2p9.root", "RECREATE");
+    TFile* fout = new TFile("AA62p4_rapidityloss_010pCen_a3.root", "RECREATE");
 
     TH1F *h_dNdy  = new TH1F("h_dNdy", "Particle rapidity; y; dN/dy"   , 500, -y_beam-12, y_beam+12);
 
@@ -171,6 +203,7 @@ void readGlauberAA() {
 
         
     }
+    
     int NeventsSaved = h_Npart->GetEntries();
 
     h_dNdy ->Scale(NScale * 1.0 / NeventsSaved);
@@ -181,6 +214,10 @@ void readGlauberAA() {
     h_dNdyA->Scale(1.0, "width");
     h_dNdyB->Scale(1.0, "width");
 
+    TGraphErrors* gr_BRAHMS_62p4GeV_netP =  makeGraphError(BRAHMS_AuAu_62p4GeV_010_netP,  "BRAHMS_AuAu_62p4GeV_010_netP");
+    TGraphErrors* gr_BRAHMS_200GeV_netP  =  makeGraphError(BRAHMS_AuAu_200GeV_005_netP ,  "BRAHMS_AuAu_200GeV_005_netP");
+    gr_BRAHMS_62p4GeV_netP->Write();
+    gr_BRAHMS_200GeV_netP->Write();
     
     fout->Write();
     fout->Close();
