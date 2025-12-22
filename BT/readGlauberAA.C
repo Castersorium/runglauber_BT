@@ -46,31 +46,40 @@ TGraphErrors* makeGraphError(
 void readGlauberAA() {
 
     // 1. 打开 TGlauber 输出文件
-    TFile *f = TFile::Open("AuAu62p4_nucleons_1k.root");
+    TFile *f = TFile::Open("AuAu62p4_nucleons_1M.root");
     if (!f || f->IsZombie()) { 
         std::cout << "❌ Cannot open file\n"; 
         return; 
     }
 
     // 3. 参数设置
-    int Read_TotNevents = 50000;
+    int Read_TotNevents = 200000;
     // double y_beam = 5.36; // AuAu 200 GeV beam rapidity
-    // double Npart_cut_up  = 357+8;
-    // double Npart_cut_low = 357-8;
-    // double alpha = 3.0;  
-    // double NScale = 1.0/3.5;
+    // double Npart_mid  = 357;
+    // double Npart_width = 8;
+    // double alpha = 1.0;  
+    // double NScale = 1.0;
 
     double y_beam = 4.2; // AuAu 62.4 GeV beam rapidity
-    double Npart_cut_up  = 346.5+2.8;//314+8;
-    double Npart_cut_low = 346.5-2.8;//314-8;
-    double alpha = 3.0;  
-    double NScale = 1.0/3.5;
+    double Npart_mid  = 314;//346.5;//+2.8;//314+8;
+    double Npart_width = 8;//2.8;
+    //double Npart_cut_low = 346.5//-2.8;//314-8;
+    double alpha = 5.0;  
+    double NScale = 1.0;
+
+    // double y_beam = 2.91; // PbPb 62.4 GeV beam rapidity
+    // double Npart_mid  = 314;//346.5;//+2.8;//314+8;
+    // double Npart_width = 8;//2.8;
+    // double alpha = 5.0;  
+    // double NScale = 1.0;
 
     TRandom3 *rnd = new TRandom3(0); 
 
-    TFile* fout = new TFile("AA62p4_rapidityloss_010pCen_a3.root", "RECREATE");
+    TFile* fout = new TFile("AA62p4_rapidityloss_05pCen_a5.root", "RECREATE");
 
     TH1F *h_dNdy  = new TH1F("h_dNdy", "Particle rapidity; y; dN/dy"   , 500, -y_beam-12, y_beam+12);
+
+    TH1F *h_dNdDyA  = new TH1F("h_dNdDyA", "(N_{part}/2)dN^{#it{p-#bar{p}}}/d(y-y_{beam}); #Deltay=y-y_{beam}; h_dNdDy"   , 500, -y_beam-12, y_beam+12);
 
     TH1F *h_dNdyA = new TH1F("h_dNdyA", "Projectile rapidity; y; dN/dy", 500, -y_beam-10, y_beam+10);
     TH1F *h_dNdyB = new TH1F("h_dNdyB", "Target rapidity; y; dN/dy"    , 500, -y_beam-10, y_beam+10);
@@ -130,7 +139,7 @@ void readGlauberAA() {
         }
         nt->GetEntry(evt);
         //if(b>3.31) continue; // 0~5% 10.1103/PhysRevC.79.034909
-        if((Npart_tree>Npart_cut_up) || (Npart_tree<Npart_cut_low)) continue;
+        if((Npart_tree>(Npart_mid+Npart_width)) || (Npart_tree<(Npart_mid-Npart_width))) continue;
         TString arrname = Form("nucleonarray%d", evt);
         TObjArray *arr = (TObjArray*)f->Get(arrname);
 
@@ -189,8 +198,10 @@ void readGlauberAA() {
             double y_final = y_curr;
 
             h_dNdy->Fill(y_final);
+
             if(nuc->IsInNucleusA()){        
-                h_dNdyA->Fill(y_final);                
+                h_dNdyA->Fill(y_final);   
+                h_dNdDyA->Fill(y_final-y_beam);             
             }
 
             if (nuc->IsInNucleusB()){              
@@ -206,23 +217,34 @@ void readGlauberAA() {
     
     int NeventsSaved = h_Npart->GetEntries();
 
-    h_dNdy ->Scale(NScale * 1.0 / NeventsSaved);
-    h_dNdyA->Scale(NScale * 1.0 / NeventsSaved);
-    h_dNdyB->Scale(NScale * 1.0 / NeventsSaved);
+    h_dNdy ->Scale( 1.0 / NeventsSaved);
+    h_dNdyA->Scale( 1.0 / NeventsSaved);
+    h_dNdyB->Scale( 1.0 / NeventsSaved);
 
     h_dNdy ->Scale(1.0, "width");
     h_dNdyA->Scale(1.0, "width");
     h_dNdyB->Scale(1.0, "width");
 
-    TGraphErrors* gr_BRAHMS_62p4GeV_netP =  makeGraphError(BRAHMS_AuAu_62p4GeV_010_netP,  "BRAHMS_AuAu_62p4GeV_010_netP");
-    TGraphErrors* gr_BRAHMS_200GeV_netP  =  makeGraphError(BRAHMS_AuAu_200GeV_005_netP ,  "BRAHMS_AuAu_200GeV_005_netP");
-    TGraphErrors* gr_STAR_62p4GeV_netP  =  makeGraphError(STAR_AuAu_62p4GeV_005_netP ,  "STAR_AuAu_62p4GeV_005_netP");
-    TGraphErrors* gr_STAR_200GeV_netP  =  makeGraphError(STAR_AuAu_200GeV_005_netP ,  "STAR_AuAu_200GeV_005_netP");
+    h_dNdDyA->Scale(NScale * 1.0 / NeventsSaved/(Npart_mid/2));
+    h_dNdDyA->Scale(1.0, "width");
 
-    gr_BRAHMS_62p4GeV_netP->Write();
-    gr_BRAHMS_200GeV_netP->Write();
-    gr_STAR_62p4GeV_netP->Write();
-    gr_STAR_200GeV_netP->Write();
+    TGraphErrors* gr_NA49_17p3GeV_netB =  makeGraphError(NA49_PbPb_17p3GeV_005_netB_05Npart_Dy,  "NA49_PbPb_17p3GeV_005_netB_05Npart_Dy");
+
+
+    TGraphErrors* gr_BRAHMS_62p4GeV_netB =  makeGraphError(BRAHMS_AuAu_62p4GeV_005_netB_05Npart_Dy,  "BRAHMS_AuAu_62p4GeV_005_netB_05Npart_Dy");
+    TGraphErrors* gr_BRAHMS_200GeV_netB  =  makeGraphError(BRAHMS_AuAu_200GeV_010_netB_05Npart_Dy ,  "BRAHMS_AuAu_200GeV_010_netB_05Npart_Dy");
+
+    TGraphErrors* gr_STAR_62p4GeV_netB  =  makeGraphError(STAR_AuAu_62p4GeV_005_netP_05Npart_Dy ,  "STAR_AuAu_62p4GeV_005_netP_05Npart_Dy");
+    TGraphErrors* gr_STAR_200GeV_netB  =  makeGraphError(STAR_AuAu_200GeV_005_netP_05Npart_Dy ,  "STAR_AuAu_200GeV_005_netP_05Npart_Dy");
+
+
+    gr_NA49_17p3GeV_netB->Write();
+    gr_BRAHMS_62p4GeV_netB->Write();
+    gr_BRAHMS_200GeV_netB->Write();
+    gr_STAR_62p4GeV_netB->Write();
+    gr_STAR_200GeV_netB->Write();
+
+
     fout->Write();
     fout->Close();
 
