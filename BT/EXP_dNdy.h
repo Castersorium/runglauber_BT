@@ -141,17 +141,17 @@ const std::vector<dNdyPoint> STAR_AuAu_200GeV_005_netP = {
     { 0.0, -0.1, 0.1, 8.0, 1.8, 0.000 }
 }; //npart = 346.5 \pm  2.8
 
-// Divide 2 for only projectile
+// Divide 2 for only projectile, Times 2 to imitate net-baryon
 const std::vector<dNdyPoint> STAR_AuAu_62p4GeV_005_netP_05Npart_Dy = {
-    { -4.198, -4.298, -4.098, 0.0880/2, 0.0120, 0.0 }
+    { -4.198, -4.298, -4.098, 0.0880, 0.0120, 0.0 }
 };
 
 const std::vector<dNdyPoint> STAR_AuAu_130GeV_006_netP_05Npart_Dy = {
-    { -4.932, -5.032, -4.832, 0.0478/2, 0.0054, 0.0}
+    { -4.932, -5.032, -4.832, 0.0478, 0.0054, 0.0}
 };
 
 const std::vector<dNdyPoint> STAR_AuAu_200GeV_005_netP_05Npart_Dy = {
-    { -5.363, -5.463, -5.263, 0.0462/2, 0.0104, 0.0}
+    { -5.363, -5.463, -5.263, 0.0462, 0.0104, 0.0}
 };
 
 
@@ -192,6 +192,7 @@ const std::vector<dNdyPoint> NA49_PbPb_17p3GeV_005_netP_05Npart_Dy = {
     { -1.33, -1.43, -1.23, 0.220, 0.011, 0.220*0.07 }
 };
 
+// Extract data from 10.1016/j.nuclphysa.2021.122141
 const std::vector<dNdyPoint> NA49_PbPb_17p3GeV_005_netB_05Npart_Dy = {
 
     { -3.52, -3.62, -3.42, 0.121095, 0.0588912, 0.0 },

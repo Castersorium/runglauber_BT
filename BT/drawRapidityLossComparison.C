@@ -33,19 +33,19 @@ void drawRapidityLossComparison() {
     /* ---------- 文件与参数 ---------- */
     const int N = 5;
     TString files[N] = {
-        "AA200_rapidityloss_05pCen_a1.root",
-        "AA200_rapidityloss_05pCen_a2.root",
-        "AA200_rapidityloss_05pCen_a3.root",
-        "AA200_rapidityloss_05pCen_a4.root",
-        "AA200_rapidityloss_05pCen_a5.root"
+        "AA62p4_rapidityloss_010pCen_a1.root",
+        "AA62p4_rapidityloss_010pCen_a2.root",
+        "AA62p4_rapidityloss_010pCen_a3.root",
+        "AA62p4_rapidityloss_010pCen_a4.root",
+        "AA62p4_rapidityloss_010pCen_a5.root"
     };
 
     TString labels[N] = {
-        "MCM 200 GeV, #alpha = 1.0",
-        "MCM 200 GeV, #alpha = 2.0",
-        "MCM 200 GeV, #alpha = 3.0",
-        "MCM 200 GeV, #alpha = 4.0",
-        "MCM 200 GeV, #alpha = 5.0"
+        "MCM 62.4 GeV 0~10% , #alpha = 1.0",
+        "MCM 62.4 GeV 0~10% , #alpha = 2.0",
+        "MCM 62.4 GeV 0~10% , #alpha = 3.0",
+        "MCM 62.4 GeV 0~10% , #alpha = 4.0",
+        "MCM 62.4 GeV 0~10% , #alpha = 5.0"
     };
 
     int colors[N]  = {kBlack, kRed+1, kBlue+1, kGreen+2, kMagenta+2};
@@ -60,7 +60,7 @@ void drawRapidityLossComparison() {
     /* ---------- Frame ---------- */
     TH1F* frame = c1->DrawFrame(
         -7.5, 0.0,
-         0.5, 0.5   // 根据你 h_dNdDyA 实际范围可再调
+         0.5, 0.7   // 根据你 h_dNdDyA 实际范围可再调
     );
 
     frame->SetTitle("");
@@ -109,52 +109,52 @@ void drawRapidityLossComparison() {
 
     leg->Draw();
 
-TFile* fexp = TFile::Open("expData.root", "READ");
-if (!fexp || fexp->IsZombie()) {
-    std::cerr << "Cannot open expData.root" << std::endl;
-} else {
+// TFile* fexp = TFile::Open("expData.root", "READ");
+// if (!fexp || fexp->IsZombie()) {
+//     std::cerr << "Cannot open expData.root" << std::endl;
+// } else {
 
-    const int Nexp = 5;
-    TString expNames[Nexp] = {
-        "NA49_17p3GeV",
-        "BRAHMS_62p4GeV",
-        "BRAHMS_200GeV",
-        "STAR_62p4GeV",
-        "STAR_200GeV"
-    };
+//     const int Nexp = 5;
+//     TString expNames[Nexp] = {
+//         "NA49_17p3GeV",
+//         "BRAHMS_62p4GeV",
+//         "BRAHMS_200GeV",
+//         "STAR_62p4GeV",
+//         "STAR_200GeV"
+//     };
 
-    TString expLabels[Nexp] = {
-        "NA49 Pb+Pb 17.3 GeV",
-        "BRAHMS Au+Au 62.4 GeV",
-        "BRAHMS Au+Au 200 GeV",
-        "STAR Au+Au 62.4 GeV",
-        "STAR Au+Au 200 GeV"
-    };
+//     TString expLabels[Nexp] = {
+//         "NA49 Pb+Pb 17.3 GeV",
+//         "BRAHMS Au+Au 62.4 GeV",
+//         "BRAHMS Au+Au 200 GeV",
+//         "STAR Au+Au 62.4 GeV",
+//         "STAR Au+Au 200 GeV"
+//     };
 
-    for (int i = 0; i < Nexp; ++i) {
+//     for (int i = 0; i < Nexp; ++i) {
 
-        TGraphErrors* gr =
-            (TGraphErrors*)fexp->Get(expNames[i]);
+//         TGraphErrors* gr =
+//             (TGraphErrors*)fexp->Get(expNames[i]);
 
-        if (!gr) {
-            std::cerr << "Cannot find " << expNames[i]
-                      << " in expData.root" << std::endl;
-            continue;
-        }
+//         if (!gr) {
+//             std::cerr << "Cannot find " << expNames[i]
+//                       << " in expData.root" << std::endl;
+//             continue;
+//         }
 
 
-        // 直接画，不改任何风格
-        gr->Draw("P SAME");
+//         // 直接画，不改任何风格
+//         gr->Draw("P SAME");
 
-        leg->AddEntry(gr, expLabels[i], "p");
-    }
+//         leg->AddEntry(gr, expLabels[i], "p");
+//     }
 
-    fexp->Close();
-}
+//     fexp->Close();
+// }
 
     
 
 
-    c1->SaveAs("AA200_rapidityloss_05pCen_compare.pdf");
-    c1->SaveAs("AA200_rapidityloss_05pCen_compare.root");
+    c1->SaveAs("AA62p4_rapidityloss_010pCen_compare.pdf");
+    c1->SaveAs("AA62p4_rapidityloss_010pCen_compare.root");
 }
