@@ -33,19 +33,19 @@ void drawRapidityLossComparison() {
     /* ---------- 文件与参数 ---------- */
     const int N = 5;
     TString files[N] = {
-        "AA62p4_rapidityloss_010pCen_a1.root",
-        "AA62p4_rapidityloss_010pCen_a2.root",
-        "AA62p4_rapidityloss_010pCen_a3.root",
-        "AA62p4_rapidityloss_010pCen_a4.root",
-        "AA62p4_rapidityloss_010pCen_a5.root"
+        "AA200_rapidityloss_05pCen_a1.root",
+        "AA200_rapidityloss_05pCen_a2.root",
+        "AA200_rapidityloss_05pCen_a3.root",
+        "AA200_rapidityloss_05pCen_a4.root",
+        "AA200_rapidityloss_05pCen_a5.root"
     };
 
     TString labels[N] = {
-        "MCM 62.4 GeV 0~10% , #alpha = 1.0",
-        "MCM 62.4 GeV 0~10% , #alpha = 2.0",
-        "MCM 62.4 GeV 0~10% , #alpha = 3.0",
-        "MCM 62.4 GeV 0~10% , #alpha = 4.0",
-        "MCM 62.4 GeV 0~10% , #alpha = 5.0"
+        "MCM 200 GeV 0~5% , #alpha = 1.0",
+        "MCM 200 GeV 0~5% , #alpha = 2.0",
+        "MCM 200 GeV 0~5% , #alpha = 3.0",
+        "MCM 200 GeV 0~5% , #alpha = 4.0",
+        "MCM 200 GeV 0~5% , #alpha = 5.0"
     };
 
     int colors[N]  = {kBlack, kRed+1, kBlue+1, kGreen+2, kMagenta+2};
@@ -65,7 +65,7 @@ void drawRapidityLossComparison() {
 
     frame->SetTitle("");
     frame->GetXaxis()->SetTitle("#Deltay=y-y_{beam}");
-    frame->GetYaxis()->SetTitle("(N_{part}/2)dN^{#it{B-#bar{B}}}/d(y-y_{beam})");
+    frame->GetYaxis()->SetTitle("(2/N_{part})dN^{#it{B-#bar{B}}}/d(y-y_{beam})");
 
     frame->GetXaxis()->SetTitleSize(0.045);
     frame->GetYaxis()->SetTitleSize(0.045);
@@ -155,6 +155,6 @@ void drawRapidityLossComparison() {
     
 
 
-    c1->SaveAs("AA62p4_rapidityloss_010pCen_compare.pdf");
-    c1->SaveAs("AA62p4_rapidityloss_010pCen_compare.root");
+    c1->SaveAs("AA200_rapidityloss_05pCen_compare.pdf");
+    c1->SaveAs("AA200_rapidityloss_05pCen_compare.root");
 }

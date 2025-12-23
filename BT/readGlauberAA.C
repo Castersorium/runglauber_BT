@@ -82,9 +82,9 @@ void readGlauberAA() {
 
     TH1F *h_dNdy  = new TH1F("h_dNdy", "Particle rapidity; y; dN/dy"   , 500, -y_beam-12, y_beam+12);
 
-    TH1F *h_dNdDyA   = new TH1F("h_dNdDyA" ,   "h_dNdDy; #Deltay=y-y_{beam};(N_{part}/2)dN^{#it{N-#bar{N}}}/d(y-y_{beam}) "   , 500, -y_beam-12, y_beam+12);
-    TH1F *h_dNdDyAP  = new TH1F("h_dNdDyAP", "h_dNdDyAP; #Deltay=y-y_{beam};(N_{part}/2)dN^{#it{p-#bar{p}}}/d(y-y_{beam}) "   , 500, -y_beam-12, y_beam+12);
-    TH1F *h_dNdDyAN  = new TH1F("h_dNdDyAN", "h_dNdDyAN; #Deltay=y-y_{beam};(N_{part}/2)dN^{#it{n-#bar{n}}}/d(y-y_{beam}) "   , 500, -y_beam-12, y_beam+12);
+    TH1F *h_dNdDyA   = new TH1F("h_dNdDyA" ,   "h_dNdDy; #Deltay=y-y_{beam};(2/N_{part})dN^{#it{N-#bar{N}}}/d(y-y_{beam}) "   , 500, -y_beam-12, y_beam+12);
+    TH1F *h_dNdDyAP  = new TH1F("h_dNdDyAP", "h_dNdDyAP; #Deltay=y-y_{beam};(2/N_{part})dN^{#it{p-#bar{p}}}/d(y-y_{beam}) "   , 500, -y_beam-12, y_beam+12);
+    TH1F *h_dNdDyAN  = new TH1F("h_dNdDyAN", "h_dNdDyAN; #Deltay=y-y_{beam};(2/N_{part})dN^{#it{n-#bar{n}}}/d(y-y_{beam}) "   , 500, -y_beam-12, y_beam+12);
 
     TH1F *h_dNdyA = new TH1F("h_dNdyA", "Projectile rapidity; y; dN/dy", 500, -y_beam-10, y_beam+10);
     TH1F *h_dNdyB = new TH1F("h_dNdyB", "Target rapidity; y; dN/dy"    , 500, -y_beam-10, y_beam+10);

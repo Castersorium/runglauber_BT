@@ -72,7 +72,7 @@ void drawEnergyComparisonFixedAlpha() {
 
         frame->SetTitle("");
         frame->GetXaxis()->SetTitle("#Deltay=y-y_{beam}");
-        frame->GetYaxis()->SetTitle("(N_{part}/2)dN^{#it{N-#bar{N}}}/d(y-y_{beam})");
+        frame->GetYaxis()->SetTitle("(2/N_{part})dN^{#it{N-#bar{N}}}/d(y-y_{beam})");
 
         frame->GetXaxis()->SetTitleSize(0.045);
         frame->GetYaxis()->SetTitleSize(0.045);
