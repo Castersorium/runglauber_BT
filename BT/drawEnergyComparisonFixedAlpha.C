@@ -117,8 +117,6 @@ void drawEnergyComparisonFixedAlpha() {
             h->Draw("E1 SAME");
 
             leg->AddEntry(h, energyLabel[ie], "l p");
-
-
             
 
 
@@ -129,13 +127,83 @@ void drawEnergyComparisonFixedAlpha() {
         Form("#alpha = %d.0", a),
         "");
         leg->Draw();
+
+
         fout->cd();
+
         c->Write();
 
         // /* ---------- 输出 ---------- */
-        // c->SaveAs(Form("dNdDyA_fixedAlpha%d_energyCompare.pdf", a));
+        //c->SaveAs(Form("dNdDyA_fixedAlpha%d_energyCompare.pdf", a));
         // c->SaveAs(Form("dNdDyA_fixedAlpha%d_energyCompare.root", a));
     }
+
+        // ============================================================
+        // NcollA 对比：不同能量
+        // ============================================================ 
+
+        auto* cN = new TCanvas(
+            "c_Ncoll",
+            "NcollA comparison",
+            800, 600
+        );
+        cN->SetTicks();
+        cN->SetLeftMargin(0.13);
+        cN->SetBottomMargin(0.12);
+
+        /* ---------- Frame ---------- */
+        TH1F* frameN = cN->DrawFrame(
+            0.0, 0.0,
+            25.0, 0.2    // 根据你的 Ncoll 分布范围自行微调
+        );
+        frameN->SetTitle("");
+        frameN->GetXaxis()->SetTitle("N_{coll}");
+        frameN->GetYaxis()->SetTitle("P(N_{coll})");
+
+        /* ---------- Legend ---------- */
+        auto* legN = new TLegend(0.55, 0.65, 0.88, 0.88);
+        legN->SetBorderSize(0);
+        legN->SetFillStyle(0);
+        legN->SetTextFont(42);
+        legN->SetTextSize(0.035);
+
+        /* alpha 说明 */
+        //legN->AddEntry((TObject*)0, Form("#alpha = %d", a), "");
+
+        /* ---------- 能量 loop ---------- */
+        for (int ie = 0; ie < Nenergy; ++ie) {
+        
+            TString fname;
+            fname.Form(
+                "%s_rapidityloss_05pCen_a3.root",
+                energyTag[ie].Data()
+            );
+        
+            TFile* f = TFile::Open(fname, "READ");
+            if (!f || f->IsZombie()) continue;
+        
+            TH1F* hN = (TH1F*)f->Get("h_NcollA");
+            if (!hN) {
+                f->Close();
+                continue;
+            }
+        
+            hN->SetDirectory(0);
+            hN->Scale(1.0 / hN->Integral());  // 常见做法：形状比较
+            styleHist(hN, colors[ie], markers[ie]);
+            hN->Draw("HIST SAME");
+        
+            legN->AddEntry(hN, energyLabel[ie], "l p");
+        
+            f->Close();
+        }
+
+        legN->Draw();
+
+        fout->cd();
+        cN->Write();
+        /* ---------- 写入统一 fout ---------- */
+
     fout->Write();
     fout->Close();
 }
