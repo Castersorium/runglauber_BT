@@ -45,14 +45,22 @@ TGraphErrors* makeGraphError(
 
 void readGlauberAA() {
 
+    TString Projectile = "Au2rw"; //Au Au2rw  Au197pnHFB14
+    TString Target = Projectile;
+    TString Energy = "62p4";
+    TString System = Projectile+Target+ "_" + Energy;
+
+    double alpha = 3.0; 
+
     // 1. 打开 TGlauber 输出文件
-    TFile *f = TFile::Open("PbPb17p3_nucleons_1M.root");
+    TFile *f = TFile::Open(System + "_nucleons_1M.root");
     if (!f || f->IsZombie()) { 
         std::cout << "❌ Cannot open file\n"; 
         return; 
     }
-    TFile* fout = new TFile("PbPb17p3_rapidityloss_05pCen_a1.root", "RECREATE");
-    
+    // TFile* fout = new TFile("PbPb17p3_rapidityloss_05pCen_a3.root", "RECREATE");
+    TFile* fout = new TFile(System +"_rapidityloss_05pCen_a3.root", "RECREATE");
+
     // 3. 参数设置
     int Read_TotNevents = 100000;
     // double y_beam = 5.36; // AuAu 200 GeV beam rapidity
@@ -61,20 +69,20 @@ void readGlauberAA() {
     // double alpha = 1.0;  
     // double NScale = 1.0;
 
-    // double y_beam = 4.2; // AuAu 62.4 GeV beam rapidity
-    // // double Npart_mid  = 314;//346.5;//+2.8;//314+8;//BRAHMS0~10%
-    // // double Npart_width = 8;//2.8;//BRAHMS0~10%
-    // double Npart_mid   = 15.3; //STAR 0~5%
-    // double Npart_width =  2.4; //STAR 0~5%
-    // //double Npart_cut_low = 346.5//-2.8;//314-8;
-    // double alpha = 5.0;  
-    // double NScale = 1.0;
-
-    double y_beam = 2.9; // PbPb 17.3 GeV beam rapidity
-    double Npart_mid  = 352;
-    double Npart_width = 12;
-    double alpha = 1.0;  
+    double y_beam = 4.2; // AuAu 62.4 GeV beam rapidity
+    // double Npart_mid  = 314;//346.5;//+2.8;//314+8;//BRAHMS0~10%
+    // double Npart_width = 8;//2.8;//BRAHMS0~10%
+    double Npart_mid   = 15.3; //STAR 0~5%
+    double Npart_width =  2.4; //STAR 0~5%
+    //double Npart_cut_low = 346.5//-2.8;//314-8;
+ 
     double NScale = 1.0;
+
+    // double y_beam = 2.9; // PbPb 17.3 GeV beam rapidity
+    // double Npart_mid  = 352;
+    // double Npart_width = 12;
+    // double alpha = 3.0;  
+    // double NScale = 1.0;
 
 
     TRandom3 *rnd = new TRandom3(0); 
@@ -94,6 +102,9 @@ void readGlauberAA() {
     TH1F *h_b = new TH1F("h_b", "impact parameter from AA; b; ", 100, 0, 20);
     TH1F *h_Ncoll = new TH1F("h_Ncoll", "Ncoll from AA; Ncoll; ", 100, 0,1400);
     TH1F *h_NcollA = new TH1F("h_NcollA", "Ncoll of projectile; NcollA; ", 30, 0, 30);
+    TH1F *h_NcollAP = new TH1F("h_NcollAP", "Ncoll of projectile proton;  NcollAP; ", 30, 0, 30);
+    TH1F *h_NcollAN = new TH1F("h_NcollAN", "Ncoll of projectile neutron; NcollAN; ", 30, 0, 30);
+
     TH1F *h_NcollB = new TH1F("h_NcollB", "Ncoll of target; NcollB; ", 30, 0, 30);
 
 
@@ -128,9 +139,11 @@ void readGlauberAA() {
     TH1F *h_Npart = new TH1F("h_Npart", "Npart from AA; Npart; ", 100, 0, 400);
 
     // 读取 ntuple
-    TNtuple *nt = (TNtuple*)f->Get("nt_Pb_Pb");
+    TString TreeName = "nt_" + Projectile + "_" + Target;
+    TNtuple *nt = (TNtuple*)f->Get(TreeName);
+    // TNtuple *nt = (TNtuple*)f->Get("nt_Au197pnHFB14_Au197pnHFB14");
     if (!nt) {
-        printf("❌ Error: cannot find nt_Au_Au\n");
+        printf("❌ Error: cannot find nt tree\n");
         return;
     }
     float Npart_tree, Ncoll_tree, b;
@@ -177,7 +190,15 @@ void readGlauberAA() {
             if(nuc->IsInNucleusA()){
                 h_NcollA->Fill(ncoll);        
                 // projectile first rapidity
-                y_curr = y_curr - delta_y1;            
+                y_curr = y_curr - delta_y1; 
+                
+                if(nuc->IsProton()){        
+                    h_NcollAP->Fill(ncoll);             
+                }
+    
+                if (nuc->IsNeutron()){              
+                    h_NcollAN->Fill(ncoll);                
+                }
             }
 
             if (nuc->IsInNucleusB()){
@@ -258,6 +279,9 @@ void readGlauberAA() {
     h_dNdyN->Scale(1.0 / NeventsSaved);
     h_dNdyN->Scale(1.0, "width");
 
+    h_NcollA->Scale( 1.0 / (h_NcollA->Integral()));
+    h_NcollAP->Scale( 1.0 / (h_NcollAP->Integral()));
+    h_NcollAN->Scale( 1.0 / (h_NcollAN->Integral()));
 
     // TGraphErrors* gr_NA49_17p3GeV_netB =  makeGraphError(NA49_PbPb_17p3GeV_005_netB_05Npart_Dy,  "NA49_PbPb_17p3GeV_005_netB_05Npart_Dy");
 
