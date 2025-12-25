@@ -70,8 +70,8 @@ bool LookupNpartRange(
     return false;
 }
 
-
-void saveTree(
+//root -l -b -q 'saveTree.C("Au","Au","200",3.0,0,5)'
+void saveTreeAA(
     const char* projectile,
     const char* target,
     const char* energy,
