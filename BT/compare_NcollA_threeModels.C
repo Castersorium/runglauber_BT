@@ -6,9 +6,9 @@ void compare_NcollA_threeModels()
 
     // --- 文件名 ---
     const char* fnames[3] = {
-        "AuAu_62p4_rapidityloss_05pCen_a3.root",
-        "Au2rwAu2rw_62p4_rapidityloss_05pCen_a3.root",
-        "Au197pnHFB14Au197pnHFB14_62p4_rapidityloss_05pCen_a3.root"
+        "./rapidityLossData/AuAu_62p4_rapidityloss_005pCen_a3.root",
+        "./rapidityLossData/Au2rwAu2rw_62p4_rapidityloss_005pCen_a3.root",
+        "./rapidityLossData/Au197pnHFB14Au197pnHFB14_62p4_rapidityloss_005pCen_a3.root"
     };
 
     const char* titles[3] = {
@@ -21,7 +21,26 @@ void compare_NcollA_threeModels()
     TCanvas* c = new TCanvas("c_NcollA_compare",
                              "NcollA comparison",
                              2400, 800);
-    c->Divide(3,1);
+
+    TPad* pad1 = new TPad("pad1","", 0.00, 0.00, 0.33, 1.00);
+    TPad* pad2 = new TPad("pad2","", 0.33, 0.00, 0.66, 1.00);
+    TPad* pad3 = new TPad("pad3","", 0.66, 0.00, 1.00, 1.00);
+
+    pad1->SetLeftMargin(0.16);
+    pad1->SetRightMargin(0.02);
+    pad1->SetBottomMargin(0.14);
+
+    pad2->SetLeftMargin(0.06);
+    pad2->SetRightMargin(0.02);
+    pad2->SetBottomMargin(0.14);
+
+    pad3->SetLeftMargin(0.06);
+    pad3->SetRightMargin(0.10);
+    pad3->SetBottomMargin(0.14);
+
+    pad1->Draw();
+    pad2->Draw();
+    pad3->Draw();
 
     // 颜色与样式
     Color_t colA  = kBlack;
@@ -29,7 +48,10 @@ void compare_NcollA_threeModels()
     Color_t colN  = kBlue+1;
 
     for (int i = 0; i < 3; ++i) {
-        c->cd(i+1);
+        if (i == 0) pad1->cd();
+        if (i == 1) pad2->cd();
+        if (i == 2) pad3->cd();
+
 
         TFile* f = TFile::Open(fnames[i], "READ");
         if (!f || f->IsZombie()) {
@@ -68,12 +90,18 @@ void compare_NcollA_threeModels()
         hA->SetTitle(titles[i]);
         hA->GetXaxis()->SetTitle("N_{coll}");
         hA->GetYaxis()->SetTitle("P(N_{coll})");
-        hA->GetXaxis()->SetRangeUser(0,10);
-        hA->GetYaxis()->SetRangeUser(0,0.65);
+        hA->GetYaxis()->SetTitleOffset(1.4);
+        hA->GetYaxis()->SetLabelSize(0.045);
+        hA->GetXaxis()->SetLabelSize(0.045);
+        hA->GetXaxis()->SetTitleSize(0.05);
+        hA->GetYaxis()->SetTitleSize(0.05);
 
-        hA ->Draw("HIST");
-        hAP->Draw("HIST same");
-        hAN->Draw("HIST same");
+        hA->GetXaxis()->SetRangeUser(0,20);
+        hA->GetYaxis()->SetRangeUser(0,0.20);
+
+        hA ->Draw("E1");
+        hAP->Draw("E1 same");
+        hAN->Draw("E1 same");
 
         // legend
         TLegend* leg = new TLegend(0.60, 0.70, 0.88, 0.88);
@@ -88,5 +116,5 @@ void compare_NcollA_threeModels()
     }
 
     c->Update();
-    c->SaveAs("compare_NcollA_threeModels.root");
+    c->SaveAs("compare_NcollA_threeModels_7080pCen_a3.root");
 }

@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "EXP_dNdy.h"
+#include "include/EXP_dNdy.h"
 
 TGraphErrors* makeGraphError(
     const std::vector<dNdyPoint>& data,
@@ -45,7 +45,7 @@ TGraphErrors* makeGraphError(
 
 void readGlauberAA() {
 
-    TString Projectile = "Au2rw"; //Au Au2rw  Au197pnHFB14
+    TString Projectile = "Au197pnHFB14"; //Au Au2rw  Au197pnHFB14
     TString Target = Projectile;
     TString Energy = "62p4";
     TString System = Projectile+Target+ "_" + Energy;
@@ -53,13 +53,13 @@ void readGlauberAA() {
     double alpha = 3.0; 
 
     // 1. 打开 TGlauber 输出文件
-    TFile *f = TFile::Open(System + "_nucleons_1M.root");
+    TFile *f = TFile::Open("./nucleonGeneratedData/" + System + "_nucleons_1M.root");
     if (!f || f->IsZombie()) { 
         std::cout << "❌ Cannot open file\n"; 
         return; 
     }
     // TFile* fout = new TFile("PbPb17p3_rapidityloss_05pCen_a3.root", "RECREATE");
-    TFile* fout = new TFile(System +"_rapidityloss_05pCen_a3.root", "RECREATE");
+    TFile* fout = new TFile("./rapidityLossData/" + System +"_rapidityloss_005pCen_a3.root", "RECREATE");
 
     // 3. 参数设置
     int Read_TotNevents = 100000;
@@ -72,8 +72,10 @@ void readGlauberAA() {
     double y_beam = 4.2; // AuAu 62.4 GeV beam rapidity
     // double Npart_mid  = 314;//346.5;//+2.8;//314+8;//BRAHMS0~10%
     // double Npart_width = 8;//2.8;//BRAHMS0~10%
-    double Npart_mid   = 15.3; //STAR 0~5%
+    double Npart_mid   = 315.3; //STAR 0~5%
     double Npart_width =  2.4; //STAR 0~5%
+    // double Npart_mid   = 15.3; //STAR 70~80%
+    // double Npart_width =  2.4; //STAR 70~80%
     //double Npart_cut_low = 346.5//-2.8;//314-8;
  
     double NScale = 1.0;
@@ -95,6 +97,8 @@ void readGlauberAA() {
     TH1F *h_dNdDyAN  = new TH1F("h_dNdDyAN", "h_dNdDyAN; #Deltay=y-y_{beam};(2/N_{part})dN^{#it{n-#bar{n}}}/d(y-y_{beam}) "   , 500, -y_beam-12, y_beam+12);
 
     TH1F *h_dNdyA = new TH1F("h_dNdyA", "Projectile rapidity; y; dN/dy", 500, -y_beam-10, y_beam+10);
+    TH1F *h_dNdyAP = new TH1F("h_dNdyAP", "Projectile rapidity proton; y; dN/dy", 500, -y_beam-10, y_beam+10);
+    TH1F *h_dNdyAN = new TH1F("h_dNdyAN", "Projectile rapidity neutron; y; dN/dy", 500, -y_beam-10, y_beam+10);
     TH1F *h_dNdyB = new TH1F("h_dNdyB", "Target rapidity; y; dN/dy"    , 500, -y_beam-10, y_beam+10);
 
     TH1F *h_dNdyP  = new TH1F("h_dNdyP", "Proton rapidity P; y; dN/dy"   , 500, -y_beam-12, y_beam+12);
@@ -187,6 +191,7 @@ void readGlauberAA() {
             double delta_y1 = rnd->Exp(1.0);
             delta_y_total = delta_y_total + delta_y1;
 
+            //Fill Ncoll
             if(nuc->IsInNucleusA()){
                 h_NcollA->Fill(ncoll);        
                 // projectile first rapidity
@@ -229,12 +234,15 @@ void readGlauberAA() {
 
             if(nuc->IsInNucleusA()){        
                 h_dNdyA->Fill(y_final);   
+                 
                 h_dNdDyA->Fill(y_final-y_beam);        
-                if(nuc->IsProton()){        
-                    h_dNdDyAP->Fill(y_final-y_beam);             
+                if(nuc->IsProton()){       
+                    h_dNdyAP->Fill(y_final); 
+                    h_dNdDyAP->Fill(y_final-y_beam);            
                 }
     
-                if (nuc->IsNeutron()){              
+                if (nuc->IsNeutron()){  
+                    h_dNdyAN->Fill(y_final);            
                     h_dNdDyAN->Fill(y_final-y_beam);                
                 }    
             }
@@ -266,6 +274,10 @@ void readGlauberAA() {
     h_dNdy ->Scale(1.0, "width");
     h_dNdyA->Scale(1.0, "width");
     h_dNdyB->Scale(1.0, "width");
+
+
+    h_dNdyAP->Scale( 1.0 / NeventsSaved);h_dNdyAP->Scale(1.0, "width");
+    h_dNdyAN->Scale( 1.0 / NeventsSaved);h_dNdyAN->Scale(1.0, "width");
 
     h_dNdDyA->Scale(NScale * 1.0 / NeventsSaved/(Npart_mid/2));
     h_dNdDyA->Scale(1.0, "width");
