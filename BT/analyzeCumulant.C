@@ -6,7 +6,7 @@
 
 void analyzeCumulant() {
     // 1. 打开 ROOT 文件
-    TFile* f = TFile::Open("tree_AuAu_200_alpha2.00_cent0_5.root");
+    TFile* f = TFile::Open("./rapidityTree/tree_Au197pnHFB14Au197pnHFB14_62p4_alpha5.00_cent0_5.root");
     if (!f || f->IsZombie()) {
         std::cout << "❌ Cannot open file!" << std::endl;
         return;
@@ -18,6 +18,7 @@ void analyzeCumulant() {
         std::cout << "❌ Cannot find TTree 't'" << std::endl;
         return;
     }
+    cout << "Reading Tree" <<endl;
 
     // 3. 绑定变量
     int    evt, Ncoll;
@@ -36,7 +37,7 @@ void analyzeCumulant() {
     Long64_t nentries = t->GetEntries();
     for (Long64_t i = 0; i < nentries; ++i) {
         t->GetEntry(i);
-        if (isProton && y_final > 0) {
+        if (isProton && y_final > 3.2 && y_final < 4.2) {
             proton_count[evt]++;
         }
     }
@@ -69,11 +70,12 @@ void analyzeCumulant() {
     std::cout << "C3   = " << C3 << std::endl;
 
     // 6. 可选：生成 event-by-event multiplicity histogram
-    TH1D* hN = new TH1D("hN", "Event-by-event y_final>0 proton multiplicity", 20, 0, 20);
+    TH1D* hN = new TH1D("hN", "Event-by-event y_final>0 proton multiplicity", 200, 0, 200);
     for (auto &kv : proton_count) {
         hN->Fill(kv.second);
+        //cout <<kv.second << endl;
     }
     hN->GetXaxis()->SetTitle("N_proton (y_final>0)");
     hN->GetYaxis()->SetTitle("Number of events");
-    hN->Draw();
+    hN->Draw("HIST");
 }

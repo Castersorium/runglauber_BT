@@ -29,21 +29,28 @@ struct CentNpartEntry {
 
 static const CentNpartEntry gCentNpartTable[] = {
 
-    // ---------- Au+Au 62.4 GeV ----------
-    {"62p4",  0,  10, 314+8, 314-8},
+    // ---------- Au+Au 200 GeV BRAHMS----------
+    //{"200",   0,  5, 357-8, 357+8},
 
-    // ---------- Au+Au 62.4 GeV ----------
-    {"62p4",  0,  5, 312.9, 317.7},
-    {"62p4",  5, 10, 266.0, 271.0},
-    {"62p4", 10, 20, 200.0, 210.0},
-    {"62p4", 70, 80, 15.3-2.4, 15.3+2.4},
+    // ---------- Au+Au 200 GeV STAR----------
+    {"200",   0,  5, 350.0-2.4, 350.0+2.4},
+    {"200",   5, 10, 298.6-4.1, 298.6+4.1},
+    {"200",  10, 20, 234.3-4.6, 234.3+4.6},
+    {"200",  70, 80,  15.7-2.6,  15.7+2.6},
 
-    // ---------- Au+Au 200 GeV ----------
-    {"200",   0,  5, 350.0, 360.0},
-    {"200",   5, 10, 300.0, 310.0},
+    // ---------- Au+Au 62.4 GeV BRAHMS----------
+    {"62p4",  0,  10, 314-8, 314+8},
+
+    // ---------- Au+Au 62.4 GeV STAR----------
+    {"62p4",  0,  5, 346.5-2.8, 346.5+2.8},
+    {"62p4",  5, 10, 293.9-4.2, 293.9+4.2},
+    {"62p4", 10, 20, 229.8-4.6, 229.8+4.6},
+    {"62p4", 70, 80,  15.3-2.4,  15.3+2.4},
+
+
 
     // ---------- Pb+Pb 17.3 GeV ----------
-    {"17p3",  0,  5, 340.0, 364.0}
+    {"17p3",  0,  5, 356-32, 356+32}//???
 };
 
 bool LookupNpartRange(
@@ -70,7 +77,7 @@ bool LookupNpartRange(
     return false;
 }
 
-//root -l -b -q 'saveTree.C("Au","Au","200",3.0,0,5)'
+//root -l -b 'saveTree.C("Au","Au","200",3.0,0,5)'
 void saveTreeAA(
     const char* projectile,
     const char* target,
@@ -104,7 +111,7 @@ void saveTreeAA(
     //double alpha = 3.0; 
 
     // 1. 打开 TGlauber 输出文件
-    TFile *fin = TFile::Open("./nucleonGeneratedData/" + System + "_nucleons_1k.root");
+    TFile *fin = TFile::Open("./nucleonGeneratedData/" + System + "_nucleons_1M.root");
     if (!fin || fin->IsZombie()) { 
         std::cout << "Error: Cannot open file\n"; 
         return; 
@@ -122,12 +129,12 @@ void saveTreeAA(
     );
 
     // TFile* fout = new TFile("PbPb17p3_rapidityloss_05pCen_a3.root", "RECREATE");
-    TFile* fout = new TFile(outName, "RECREATE");
+    TFile* fout = new TFile("./rapidityTree/" + outName, "RECREATE");
 
     TRandom3 *rnd = new TRandom3(0); 
 
     // 3. 参数设置
-    int Read_TotNevents = 100000;
+    int Read_TotNevents = 10000;
 
     // 读取 ntuple
     TString TreeName = "nt_" + Projectile + "_" + Target;
@@ -154,6 +161,7 @@ void saveTreeAA(
     tout->Branch("Npart", &out_Npart);
     tout->Branch("Ncoll", &out_Ncoll);
     tout->Branch("b",     &out_b);
+    tout->Branch("alpha",   &alpha);
 
     tout->Branch("isProton", &isProton);
     tout->Branch("isProjectile", &isProjectile);
@@ -161,7 +169,7 @@ void saveTreeAA(
     tout->Branch("y_init",  &y_init);
     tout->Branch("y_final", &y_final);
     tout->Branch("dy",      &dy);
-    tout->Branch("alpha",   &alpha);
+    
 
     // Loop over event
     for (int evt = 0; evt < Read_TotNevents; evt++) {
