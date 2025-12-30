@@ -50,7 +50,7 @@ static const CentNpartEntry gCentNpartTable[] = {
 
 
     // ---------- Pb+Pb 17.3 GeV ----------
-    {"17p3",  0,  5, 356-32, 356+32}//???
+    {"17p3",  0,  5, 352-12, 352+12}//Phys. Rev. Lett. 82, 2471–2475 (1999), arXiv:nucl-ex/9810014.
 };
 
 bool LookupNpartRange(
@@ -139,7 +139,7 @@ void saveTreeAA(
     TRandom3 *rnd = new TRandom3(0); 
 
     // 3. 参数设置
-    int Read_TotNevents = 10000;
+    int Read_TotNevents = 1000000;
 
     // 读取 ntuple
     TString TreeName = "nt_" + Projectile + "_" + Target;
