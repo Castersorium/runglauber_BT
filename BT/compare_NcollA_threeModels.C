@@ -6,9 +6,9 @@ void compare_NcollA_threeModels()
 
     // --- 文件名 ---
     const char* fnames[3] = {
-        "./rapidityLossData/AuAu_62p4_rapidityloss_005pCen_a3.root",
-        "./rapidityLossData/Au2rwAu2rw_62p4_rapidityloss_005pCen_a3.root",
-        "./rapidityLossData/Au197pnHFB14Au197pnHFB14_62p4_rapidityloss_005pCen_a3.root"
+                            "./rapidityLossData/AuAu_62p4_rapidityloss_7080pCen_a3.root",
+                      "./rapidityLossData/Au2rwAu2rw_62p4_rapidityloss_7080pCen_a3.root",
+        "./rapidityLossData/Au197pnHFB14Au197pnHFB14_62p4_rapidityloss_7080pCen_a3.root"
     };
 
     const char* titles[3] = {
@@ -97,7 +97,7 @@ void compare_NcollA_threeModels()
         hA->GetYaxis()->SetTitleSize(0.05);
 
         hA->GetXaxis()->SetRangeUser(0,20);
-        hA->GetYaxis()->SetRangeUser(0,0.20);
+        hA->GetYaxis()->SetRangeUser(0,0.650);
 
         hA ->Draw("E1");
         hAP->Draw("E1 same");
@@ -116,5 +116,5 @@ void compare_NcollA_threeModels()
     }
 
     c->Update();
-    c->SaveAs("compare_NcollA_threeModels_7080pCen_a3.root");
+    c->SaveAs("compare_NcollA_threeModels_7080pCen_a3.pdf");
 }

@@ -28,22 +28,34 @@ void drawEnergyComparisonFixedAlpha() {
     gStyle->SetLabelFont(42, "XYZ");
 
     TFile* fout = new TFile(
-        "dNdDyA_energyComparison_fixedAlpha.root",
+        "dNdy_energyComparison_fixedAlpha.root",
         "RECREATE"
     );
 
     /* ---------- 能量信息 ---------- */
     const int Nenergy = 3;
     TString energyTag[Nenergy] = {
-        "PbPb17p3",
-        "AA62p4",
-        "AA200"
+        "./rapidityLossData/PbpnrwPbpnrw_17p3",
+        "./rapidityLossData/Au197pnHFB14Au197pnHFB14_62p4",
+        "./rapidityLossData/Au197pnHFB14Au197pnHFB14_200"
     };
 
     TString energyLabel[Nenergy] = {
         "Pb+Pb 17.3 GeV",
         "Au+Au 62.4 GeV",
         "Au+Au 200 GeV"
+    };
+
+    double ybeamValue[Nenergy] = {
+        2.9,
+        4.2,
+        5.36
+    };
+
+    double npartValue[Nenergy] = {
+        352,
+        314,
+        357
     };
 
     int colors[Nenergy]  = {kBlack, kRed+1, kBlue+1};
@@ -66,14 +78,15 @@ void drawEnergyComparisonFixedAlpha() {
 
         /* ---------- Frame ---------- */
         TH1F* frame = c->DrawFrame(
-            -7.5, 0.0,
-             0.5, 0.7    // 按你模型最大值调整
+            -7.5, 10.0,
+             7.5, 80    // 按你模型最大值调整
         );
 
         frame->SetTitle("");
-        frame->GetXaxis()->SetTitle("#Deltay=y-y_{beam}");
-        frame->GetYaxis()->SetTitle("(2/N_{part})dN^{#it{N-#bar{N}}}/d(y-y_{beam})");
-
+        frame->GetXaxis()->SetTitle("y");
+        // frame->GetYaxis()->SetTitle("(2/N_{part})dN^{#it{N-#bar{N}}}/d(y-y_{beam})");
+        frame->GetYaxis()->SetTitle("dN/dy");
+        
         frame->GetXaxis()->SetTitleSize(0.045);
         frame->GetYaxis()->SetTitleSize(0.045);
         frame->GetXaxis()->SetLabelSize(0.040);
@@ -91,7 +104,7 @@ void drawEnergyComparisonFixedAlpha() {
 
             TString fname;
             fname.Form(
-                "%s_rapidityloss_05pCen_a%d.root",
+                "%s_rapidityloss_005pCen_a%d.root",
                 energyTag[ie].Data(),
                 a
             );
@@ -102,9 +115,9 @@ void drawEnergyComparisonFixedAlpha() {
                 continue;
             }
 
-            TH1F* h = (TH1F*)f->Get("h_dNdDyA");
+            TH1F* h = (TH1F*)f->Get("h_dNdy");
             if (!h) {
-                std::cerr << "dNdDyA not found in "
+                std::cerr << "dNdy not found in "
                           << fname << std::endl;
                 f->Close();
                 continue;
@@ -113,13 +126,16 @@ void drawEnergyComparisonFixedAlpha() {
             // 防止 file 关闭后 histogram 消失
             h->SetDirectory(0);
 
+            // double ymean = h->GetMean();
+            // cout <<"alpha = " << a <<", System = "<<energyLabel[ie]; //<< endl;
+            // //cout << "ymean = " << ymean <<endl;
+            // cout << ", delta y = " << ybeamValue[ie] - ymean << endl;
+
             styleHist(h, colors[ie], markers[ie]);
             h->Draw("E1 SAME");
 
             leg->AddEntry(h, energyLabel[ie], "l p");
             
-
-
             f->Close();
         }
 
@@ -175,7 +191,7 @@ void drawEnergyComparisonFixedAlpha() {
         
             TString fname;
             fname.Form(
-                "%s_rapidityloss_05pCen_a3.root",
+                "%s_rapidityloss_005pCen_a3.root",
                 energyTag[ie].Data()
             );
         

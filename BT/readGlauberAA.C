@@ -45,12 +45,13 @@ TGraphErrors* makeGraphError(
 
 void readGlauberAA() {
 
-    TString Projectile = "Au197pnHFB14"; //Au Au2rw  Au197pnHFB14
+    TString Projectile = "Au197pnHFB14"; //Au Au2rw Au197pnHFB14  Pbpnrw
     TString Target = Projectile;
-    TString Energy = "62p4";
+    TString Energy = "200";
     TString System = Projectile+Target+ "_" + Energy;
 
-    double alpha = 3.0; 
+    double alpha = 5.0; 
+    double NScale = 1.0;
 
     // 1. 打开 TGlauber 输出文件
     TFile *f = TFile::Open("./nucleonGeneratedData/" + System + "_nucleons_1M.root");
@@ -59,33 +60,28 @@ void readGlauberAA() {
         return; 
     }
     // TFile* fout = new TFile("PbPb17p3_rapidityloss_05pCen_a3.root", "RECREATE");
-    TFile* fout = new TFile("./rapidityLossData/" + System +"_rapidityloss_005pCen_a3.root", "RECREATE");
+    TFile* fout = new TFile("./rapidityLossData/" + System +"_rapidityloss_005pCen_a5.root", "RECREATE");
 
     // 3. 参数设置
     int Read_TotNevents = 100000;
-    // double y_beam = 5.36; // AuAu 200 GeV beam rapidity
-    // double Npart_mid  = 357;
-    // double Npart_width = 8;
-    // double alpha = 1.0;  
-    // double NScale = 1.0;
+    double y_beam = 5.36; // AuAu 200 GeV beam rapidity
+    double Npart_mid   = 357;//350;
+    double Npart_width = 8;//2.4;
 
-    double y_beam = 4.2; // AuAu 62.4 GeV beam rapidity
-    // double Npart_mid  = 314;//346.5;//+2.8;//314+8;//BRAHMS0~10%
-    // double Npart_width = 8;//2.8;//BRAHMS0~10%
-    double Npart_mid   = 315.3; //STAR 0~5%
-    double Npart_width =  2.4; //STAR 0~5%
-    // double Npart_mid   = 15.3; //STAR 70~80%
-    // double Npart_width =  2.4; //STAR 70~80%
-    //double Npart_cut_low = 346.5//-2.8;//314-8;
+    // double y_beam = 4.2; // AuAu 62.4 GeV beam rapidity
+    // // double Npart_mid  = 314;//346.5;//+2.8;//314+8;//BRAHMS0~10%
+    // // double Npart_width = 8;//2.8;//BRAHMS0~10%
+    // double Npart_mid   = 315.3; //STAR 0~5%
+    // double Npart_width =  2.4; //STAR 0~5%
+    // // double Npart_mid   = 15.3; //STAR 70~80%
+    // // double Npart_width =  2.4; //STAR 70~80%
+    // //double Npart_cut_low = 346.5//-2.8;//314-8;
  
-    double NScale = 1.0;
+
 
     // double y_beam = 2.9; // PbPb 17.3 GeV beam rapidity
     // double Npart_mid  = 352;
     // double Npart_width = 12;
-    // double alpha = 3.0;  
-    // double NScale = 1.0;
-
 
     TRandom3 *rnd = new TRandom3(0); 
 
