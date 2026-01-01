@@ -189,23 +189,23 @@ void readTree(
 
     TH1F *h_dNdy =
         new TH1F("h_dNdy",";y;counts",
-                 500,-10,10);
+                 5000,-10,10);
 
     TH1F *h_dNdyA =
         new TH1F("h_dNdyA",";y;counts",
-                 500,-10,10);
+                 5000,-10,10);
 
     TH1F *h_dNdyB =
         new TH1F("h_dNdyB",";y;counts",
-                 500,-10,10);
+                 5000,-10,10);
 
     TH1F *h_dNdyAP =
         new TH1F("h_dNdyAP",";y;counts",
-                 500,-10,10);
+                 5000,-10,10);
 
     TH1F *h_dNdyAN =
         new TH1F("h_dNdyAN",";y;counts",
-                 500,-10,10);    
+                 5000,-10,10);    
                  
     TH1F *h_dy =
         new TH1F("h_dy",";#Delta y",200,-10,10);
@@ -281,6 +281,7 @@ void readTree(
     h_NcollN->Scale( 1.0 / (h_NcollN->Integral()));
 
     int NeventsSaved = h_Npart->GetEntries();
+    double Npart_mid = h_Npart->GetMean();
     h_dNdy  ->Scale(1.0/NeventsSaved, "width");
     h_dNdyA ->Scale(1.0/NeventsSaved, "width");
     h_dNdyB ->Scale(1.0/NeventsSaved, "width");
@@ -288,21 +289,33 @@ void readTree(
     h_dNdyAN->Scale(1.0/NeventsSaved, "width");
 
 
-    double bin_hi = 0.5;
-    double bin_lo = -bin_hi;
+    double y_hi = 0.1;
+    double y_lo = -y_hi;
     double err = 0.0;
-    double dy_range = bin_hi - bin_lo;
-
-    int binValue_lo = h_dNdy->FindBin(bin_lo);
-    int binValue_hi = h_dNdy->FindBin(bin_hi);
-    double integral = h_dNdy ->IntegralAndError(binValue_lo,    binValue_hi, err, "width");
-
+    
+    int bin_lo = h_dNdy->FindBin(y_lo);
+    int bin_hi = h_dNdy->FindBin(y_hi);
+    double integral = h_dNdy ->IntegralAndError(bin_lo,    bin_hi, err, "width");
+    
+    double dy_range = (bin_hi - bin_lo)*h_dNdy->GetBinWidth(0);
     double avg_dNdy = integral / dy_range;
     double avg_err  = err      / dy_range;
 
-    cout << "<dN/dy>_{|y|<" << bin_hi << "} = "
+    cout << "<dN/dy>_{|y|<" << y_hi << "} = "
          << avg_dNdy << " ± " << avg_err << endl;
 
+double sigma_dNdy   = err; // 你已经算好的 avg_dNdy 误差
+double sigma_Npart  = h_Npart->GetMeanError();
+
+double Q = avg_dNdy * 2.0 / Npart_mid;
+
+double sigma_Q = std::sqrt(
+    std::pow(2.0 / Npart_mid * sigma_dNdy, 2) +
+    std::pow(2.0 * avg_dNdy / (Npart_mid * Npart_mid) * sigma_Npart, 2)
+);
+
+    cout << "(2/Npart)<dN/dy>_{|y|<" << y_hi << "} = "
+         << Q << " ± " << sigma_Q << endl;
 
     // ===============================
     // Output
