@@ -77,7 +77,9 @@ bool LookupNpartRange(
     return false;
 }
 
+//root -l -b 'readTree.C("Pbpnrw","Pbpnrw","17p3",3.0,0,5)'
 //root -l -b 'readTree.C("Au197pnHFB14","Au197pnHFB14","62p4",3.0,0,5)'
+//root -l -b 'readTree.C("Au197pnHFB14","Au197pnHFB14","200",3.0,0,5)'
 
 // for alpha in 1.0 2.0 3.0 4.0 5.0; do
 //   root -l -b -q "saveTreeAA.C(\"Au197pnHFB14\",\"Au197pnHFB14\",\"62p4\",${alpha},0,5)"
@@ -116,7 +118,7 @@ void readTree(
     //double alpha = 3.0; 
 
     // 1. 打开 TGlauber 输出文件
-    TFile *fin = TFile::Open("./rapidityTree/testtree_" + System + "_alpha3.00_cent0_5.root");
+    TFile *fin = TFile::Open("./rapidityTree/tree_" + System + "_alpha4.00_cent0_5.root");
     if (!fin || fin->IsZombie()) { 
         std::cout << "Error: Cannot open file\n"; 
         return; 
@@ -189,23 +191,23 @@ void readTree(
 
     TH1F *h_dNdy =
         new TH1F("h_dNdy",";y;counts",
-                 5000,-10,10);
+                 10000,-10,10);
 
     TH1F *h_dNdyA =
         new TH1F("h_dNdyA",";y;counts",
-                 5000,-10,10);
+                 10000,-10,10);
 
     TH1F *h_dNdyB =
         new TH1F("h_dNdyB",";y;counts",
-                 5000,-10,10);
+                 10000,-10,10);
 
     TH1F *h_dNdyAP =
         new TH1F("h_dNdyAP",";y;counts",
-                 5000,-10,10);
+                 10000,-10,10);
 
     TH1F *h_dNdyAN =
         new TH1F("h_dNdyAN",";y;counts",
-                 5000,-10,10);    
+                 10000,-10,10);    
                  
     TH1F *h_dy =
         new TH1F("h_dy",";#Delta y",200,-10,10);
