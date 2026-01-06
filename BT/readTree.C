@@ -47,8 +47,6 @@ static const CentNpartEntry gCentNpartTable[] = {
     {"62p4", 10, 20, 229.8-4.6, 229.8+4.6},
     {"62p4", 70, 80,  15.3-2.4,  15.3+2.4},
 
-
-
     // ---------- Pb+Pb 17.3 GeV ----------
     {"17p3",  0,  5, 352-12, 352+12}//Phys. Rev. Lett. 82, 2471–2475 (1999), arXiv:nucl-ex/9810014.
 };
@@ -99,6 +97,22 @@ void readTree(
     TString Energy = energy;
     TString System = Projectile + Target+ "_" + Energy;
 
+    TString infilename = Form(
+        "./rapidityTree/tree_%s_alpha%.2f_cent%d_%d.root",
+        System.Data(),
+        alpha,
+        centMin,
+        centMax
+    );
+
+    
+    // 1. 打开 TGlauber 输出文件
+    TFile *fin = TFile::Open(infilename);
+    if (!fin || fin->IsZombie()) {
+        std::cout << "Error: Cannot open file " << infilename << std::endl;
+        return;
+    }
+
     double npartMin, npartMax;
     if (!LookupNpartRange(Energy, centMin, centMax,
                           npartMin, npartMax)) {
@@ -117,12 +131,7 @@ void readTree(
 
     //double alpha = 3.0; 
 
-    // 1. 打开 TGlauber 输出文件
-    TFile *fin = TFile::Open("./rapidityTree/tree_" + System + "_alpha4.00_cent0_5.root");
-    if (!fin || fin->IsZombie()) { 
-        std::cout << "Error: Cannot open file\n"; 
-        return; 
-    }
+
 
     // TString outName;
     // outName.Form(
@@ -167,7 +176,16 @@ void readTree(
     //t->SetBranchAddress("alpha", &alpha);
     t->SetBranchAddress("dy", &dy);
 
-    TFile *fout = new TFile("qaRapidityTree.root","RECREATE");
+
+    TString outfilename = Form(
+        "./rapidity_dNdy/dNdy_%s_alpha%.2f_cent%d_%d.root",
+        System.Data(),
+        alpha,
+        centMin,
+        centMax
+    );
+
+    TFile *fout = new TFile(outfilename,"RECREATE");
 
 
     TH1F *h_b =
@@ -191,6 +209,10 @@ void readTree(
 
     TH1F *h_dNdy =
         new TH1F("h_dNdy",";y;counts",
+                 10000,-10,10);
+
+    TH1F *h_dNdyP =
+        new TH1F("h_dNdyP",";y;counts",
                  10000,-10,10);
 
     TH1F *h_dNdyA =
@@ -251,6 +273,7 @@ void readTree(
         // ---- Level-2 ----
         h_dNdy->Fill(y_final);
         //h_y_isProjectile->Fill(y_final, isProjectile);
+        if (isProton) h_dNdyP->Fill(y_final);
 
         if (isProjectile) {
             h_dNdyA->Fill(y_final);

@@ -54,7 +54,7 @@ void styleGraph(TGraphErrors* gr, int color, int marker) {
 /*------------------------------------------
   主函数
 ------------------------------------------*/
-void compileExpData() {
+void drawExpData_scaled_dNdDy() {
 
     gStyle->SetOptStat(0);
     gStyle->SetTitleFont(42, "XYZ");
@@ -96,7 +96,7 @@ void compileExpData() {
     styleGraph(gr_STAR_200,   kMagenta+2,29); // ★
 
     /* ---------- Canvas ---------- */
-    auto* c1 = new TCanvas("c1", "net-baryon dN/dy", 1200, 800);
+    auto* c1 = new TCanvas("c1", "Scaled net-baryon dN/dy", 1200, 800);
     c1->SetTicks();
     c1->SetLeftMargin(0.13);
     c1->SetBottomMargin(0.12);
