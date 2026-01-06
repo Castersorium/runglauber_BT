@@ -314,33 +314,33 @@ void readTree(
     h_dNdyAN->Scale(1.0/NeventsSaved, "width");
 
 
-    double y_hi = 0.1;
-    double y_lo = -y_hi;
-    double err = 0.0;
+//     double y_hi = 0.1;
+//     double y_lo = -y_hi;
+//     double err = 0.0;
     
-    int bin_lo = h_dNdy->FindBin(y_lo);
-    int bin_hi = h_dNdy->FindBin(y_hi);
-    double integral = h_dNdy ->IntegralAndError(bin_lo,    bin_hi, err, "width");
+//     int bin_lo = h_dNdy->FindBin(y_lo);
+//     int bin_hi = h_dNdy->FindBin(y_hi);
+//     double integral = h_dNdy ->IntegralAndError(bin_lo,    bin_hi, err, "width");
     
-    double dy_range = (bin_hi - bin_lo)*h_dNdy->GetBinWidth(0);
-    double avg_dNdy = integral / dy_range;
-    double avg_err  = err      / dy_range;
+//     double dy_range = (bin_hi - bin_lo)*h_dNdy->GetBinWidth(0);
+//     double avg_dNdy = integral / dy_range;
+//     double avg_err  = err      / dy_range;
 
-    cout << "<dN/dy>_{|y|<" << y_hi << "} = "
-         << avg_dNdy << " ± " << avg_err << endl;
+//     cout << "<dN/dy>_{|y|<" << y_hi << "} = "
+//          << avg_dNdy << " ± " << avg_err << endl;
 
-double sigma_dNdy   = err; // 你已经算好的 avg_dNdy 误差
-double sigma_Npart  = h_Npart->GetMeanError();
+// double sigma_dNdy   = err; // 你已经算好的 avg_dNdy 误差
+// double sigma_Npart  = h_Npart->GetMeanError();
 
-double Q = avg_dNdy * 2.0 / Npart_mid;
+// double Q = avg_dNdy * 2.0 / Npart_mid;
 
-double sigma_Q = std::sqrt(
-    std::pow(2.0 / Npart_mid * sigma_dNdy, 2) +
-    std::pow(2.0 * avg_dNdy / (Npart_mid * Npart_mid) * sigma_Npart, 2)
-);
+// double sigma_Q = std::sqrt(
+//     std::pow(2.0 / Npart_mid * sigma_dNdy, 2) +
+//     std::pow(2.0 * avg_dNdy / (Npart_mid * Npart_mid) * sigma_Npart, 2)
+// );
 
-    cout << "(2/Npart)<dN/dy>_{|y|<" << y_hi << "} = "
-         << Q << " ± " << sigma_Q << endl;
+//     cout << "(2/Npart)<dN/dy>_{|y|<" << y_hi << "} = "
+//          << Q << " ± " << sigma_Q << endl;
 
     // ===============================
     // Output

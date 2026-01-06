@@ -60,7 +60,10 @@
         "sstream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "analyzeCumulant.C": "cpp",
+        "drawEnergyComparisonFixedAlpha.C": "cpp",
+        "drawRapidityLossComparison.C": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
