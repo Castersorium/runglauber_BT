@@ -52,6 +52,23 @@ void styleGraph(TGraphErrors* gr, int color, int marker) {
 }
 
 /*------------------------------------------
+  工具函数：x -> -x（rapidity 左右镜像）
+------------------------------------------*/
+void mirrorGraphX(TGraphErrors* gr) {
+    int n = gr->GetN();
+    for (int i = 0; i < n; ++i) {
+        double x, y;
+        gr->GetPoint(i, x, y);
+        gr->SetPoint(i, -x, y);
+
+        // x 误差（dy）不变
+        double ex = gr->GetErrorX(i);
+        double ey = gr->GetErrorY(i);
+        gr->SetPointError(i, ex, ey);
+    }
+}
+
+/*------------------------------------------
   主函数
 ------------------------------------------*/
 void drawExpData_dNdy() {
@@ -73,9 +90,22 @@ void drawExpData_dNdy() {
         "NA49_17p3GeV_2011"
     );
 
+    auto* gr_NA49_17p3_1999_mirror =
+    (TGraphErrors*) gr_NA49_17p3_1999->Clone("NA49_17p3GeV_1999_mirror");
+
+    auto* gr_NA49_17p3_2011_mirror =
+    (TGraphErrors*) gr_NA49_17p3_2011->Clone("NA49_17p3GeV_2011_mirror");
+    mirrorGraphX(gr_NA49_17p3_1999_mirror);
+    mirrorGraphX(gr_NA49_17p3_2011_mirror);
+
+
+
     /* ---------- 设置样式（颜色 + 形状） ---------- */
     styleGraph(gr_NA49_17p3_1999,  kBlack,    21); // ●
     styleGraph(gr_NA49_17p3_2011,    kRed,    20); // ■
+
+    styleGraph(gr_NA49_17p3_1999_mirror, kBlack, 25); // open square  
+    styleGraph(gr_NA49_17p3_2011_mirror, kRed,   24); // ○  open circle    
 
 
     /* ---------- Canvas ---------- */
@@ -102,10 +132,12 @@ void drawExpData_dNdy() {
     /* ---------- 画图 ---------- */
     gr_NA49_17p3_1999 ->Draw("P SAME");
     gr_NA49_17p3_2011 ->Draw("P SAME");
+    gr_NA49_17p3_1999_mirror ->Draw("P SAME");
+    gr_NA49_17p3_2011_mirror ->Draw("P SAME");
 
 
     /* ---------- Legend ---------- */
-    auto* leg = new TLegend(0.15, 0.60, 0.58, 0.88);
+    auto* leg = new TLegend(0.15, 0.70, 0.58, 0.88);
     leg->SetBorderSize(0);
     leg->SetFillStyle(0);
     leg->SetTextFont(42);
@@ -119,6 +151,8 @@ void drawExpData_dNdy() {
     /* ---------- 写文件 ---------- */
     gr_NA49_17p3_1999->Write();
     gr_NA49_17p3_2011->Write();
+    gr_NA49_17p3_1999_mirror->Write();
+    gr_NA49_17p3_2011_mirror->Write();
     //frame->Write();
     c1->Write();
 
