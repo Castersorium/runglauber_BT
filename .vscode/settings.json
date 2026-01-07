@@ -63,7 +63,9 @@
         "typeinfo": "cpp",
         "analyzeCumulant.C": "cpp",
         "drawEnergyComparisonFixedAlpha.C": "cpp",
-        "drawRapidityLossComparison.C": "cpp"
+        "drawRapidityLossComparison.C": "cpp",
+        "drawRapidityLossComparison copy.C": "cpp",
+        "comparePbPb.C": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

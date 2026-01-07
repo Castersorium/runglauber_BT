@@ -187,7 +187,7 @@ void readTree(
 
     TFile *fout = new TFile(outfilename,"RECREATE");
 
-
+    int dy_bin = 50;
     TH1F *h_b =
         new TH1F("h_b",";b [fm]",100,0,20);
 
@@ -209,27 +209,27 @@ void readTree(
 
     TH1F *h_dNdy =
         new TH1F("h_dNdy",";y;counts",
-                 10000,-10,10);
+            dy_bin,-10,10);
 
     TH1F *h_dNdyP =
         new TH1F("h_dNdyP",";y;counts",
-                 10000,-10,10);
+            dy_bin,-10,10);
 
     TH1F *h_dNdyA =
         new TH1F("h_dNdyA",";y;counts",
-                 10000,-10,10);
+            dy_bin,-10,10);
 
     TH1F *h_dNdyB =
         new TH1F("h_dNdyB",";y;counts",
-                 10000,-10,10);
+            dy_bin,-10,10);
 
     TH1F *h_dNdyAP =
         new TH1F("h_dNdyAP",";y;counts",
-                 10000,-10,10);
+            dy_bin,-10,10);
 
     TH1F *h_dNdyAN =
         new TH1F("h_dNdyAN",";y;counts",
-                 10000,-10,10);    
+            dy_bin,-10,10);    
                  
     TH1F *h_dy =
         new TH1F("h_dy",";#Delta y",200,-10,10);
@@ -308,6 +308,7 @@ void readTree(
     int NeventsSaved = h_Npart->GetEntries();
     double Npart_mid = h_Npart->GetMean();
     h_dNdy  ->Scale(1.0/NeventsSaved, "width");
+    h_dNdyP ->Scale(1.0/NeventsSaved, "width");
     h_dNdyA ->Scale(1.0/NeventsSaved, "width");
     h_dNdyB ->Scale(1.0/NeventsSaved, "width");
     h_dNdyAP->Scale(1.0/NeventsSaved, "width");
