@@ -94,7 +94,7 @@ void comparePbPb() {
             continue;
         }
 
-        TH1F* h = (TH1F*)f->Get("h_dNdyA");
+        TH1F* h = (TH1F*)f->Get("h_dNdy");
         if (!h) {
             std::cerr << "Histogram h_dNdy not found in "
                       << files[i] << std::endl;

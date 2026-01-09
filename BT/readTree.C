@@ -220,7 +220,7 @@ void readTree(
             dy_bin,-10,10);
 
     TH1F *h_dNdy_over_Nw =
-            new TH1F("(1/Nw)dNdy",";y;counts",
+            new TH1F("h_dNdy_over_Nw",";y;counts",
                 dy_bin,-10,10);
 
     TH1F *h_dNdyP =

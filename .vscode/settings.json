@@ -65,7 +65,13 @@
         "drawEnergyComparisonFixedAlpha.C": "cpp",
         "drawRapidityLossComparison.C": "cpp",
         "drawRapidityLossComparison copy.C": "cpp",
-        "comparePbPb.C": "cpp"
+        "comparePbPb.C": "cpp",
+        "drawExpData_dNdy copy.C": "cpp",
+        "drawExpData_dNdy_overNw.C": "cpp",
+        "save.C": "cpp",
+        "save_NA49_2011_dNdy_byCent.C": "cpp",
+        "save_NA49_2011_dNdy_overNw_byCent.C": "cpp",
+        "draw_compare_BT.C": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

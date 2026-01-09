@@ -1,18 +1,27 @@
 #!/bin/bash
 
-# for alpha in 2.0 3.0 4.0; do
-#   root -l -b -q "saveTreeAA.C(\"Au197pnHFB14\",\"Au197pnHFB14\",\"200\",${alpha},0,5)"
-# done
-# 
-# 3.0 4.0 5.0 
-# 2.0 3.0 3.25 3.5 3.75 4.0 4.25 4.5
+energy="17p3_2011"
+projectile="Pbpnrw"
+target="Pbpnrw"
 
-# for alpha in 3.0 4.0 5.0  ; do
-#   root -l -b -q "saveTreeAA.C(\"Pbpnrw\",\"Pbpnrw\",\"17p3_2011\",${alpha},33.5,43.5)"
-#   echo "Complete Saving alpha = ${alpha}"
-# done
+# alpha 扫描
+alphas=(3.0 4.0 5.0)
 
-for alpha in  3.0 4.0 5.0 ; do
-  root -l -b -q "readTree.C(\"Pbpnrw\",\"Pbpnrw\",\"17p3_2011\",${alpha},33.5,43.5)"
-  echo "Complete Reading alpha = ${alpha}"
+# 中心度区间（百分比）
+centMins=(0    5     12.5  23.5  33.5)
+centMaxs=(5    12.5  23.5  33.5  43.5)
+
+for alpha in "${alphas[@]}"; do
+  for i in ${!centMins[@]}; do
+    cmin=${centMins[$i]}
+    cmax=${centMaxs[$i]}
+
+    root -l -b -q \
+      "saveTreeAA.C(\"${projectile}\",\"${target}\",\"${energy}\",${alpha},${cmin},${cmax})"
+    
+    root -l -b -q \
+      "readTree.C(\"${projectile}\",\"${target}\",\"${energy}\",${alpha},${cmin},${cmax})"
+
+    echo "Complete: alpha=${alpha}, cent=${cmin}-${cmax}%"
+  done
 done
