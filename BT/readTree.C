@@ -48,7 +48,14 @@ static const CentNpartEntry gCentNpartTable[] = {
     {"62p4", 70, 80,  15.3-2.4,  15.3+2.4},
 
     // ---------- Pb+Pb 17.3 GeV ----------
-    {"17p3",  0,  5, 352-12, 352+12}//Phys. Rev. Lett. 82, 2471–2475 (1999), arXiv:nucl-ex/9810014.
+    {"17p3_1999",  0,  5, 352-12, 352+12},//Phys. Rev. Lett. 82, 2471–2475 (1999), arXiv:nucl-ex/9810014.
+
+    {"17p3_2011",  0,      5, 357+1, 357-1}, //10.1103/PhysRevC.83.014901
+    {"17p3_2011",  5,   12.5, 288+2, 288-2},
+    {"17p3_2011",  12.5,23.5, 211+3, 211-3},
+    {"17p3_2011",  23.5,33.5, 146+4, 146-4},
+    {"17p3_2011",  33.5,43.5,  85+7,  85-7}
+
 };
 
 bool LookupNpartRange(
@@ -88,8 +95,8 @@ void readTree(
     const char* target,
     const char* energy,
     double alpha,
-    int centMin,
-    int centMax
+    double centMin,
+    double centMax
 ) {
 
     TString Projectile = projectile;//"Au197pnHFB14"; //Au Au2rw  Au197pnHFB14
@@ -98,7 +105,7 @@ void readTree(
     TString System = Projectile + Target+ "_" + Energy;
 
     TString infilename = Form(
-        "./rapidityTree/tree_%s_alpha%.2f_cent%d_%d.root",
+        "./rapidityTree/tree_%s_alpha%.2f_cent%.1f_%.1f.root",
         System.Data(),
         alpha,
         centMin,
@@ -123,7 +130,8 @@ void readTree(
     double y_beam = -1;
     if      (Energy == "200")  y_beam = 5.36;
     else if (Energy == "62p4") y_beam = 4.20;
-    else if (Energy == "17p3") y_beam = 2.90;
+    else if (Energy == "17p3_1999") y_beam = 2.90;
+    else if (Energy == "17p3_2011") y_beam = 2.90;
     else {
         std::cout << "Error: Unknown energy" << std::endl;
         return;
@@ -178,7 +186,7 @@ void readTree(
 
 
     TString outfilename = Form(
-        "./rapidity_dNdy/dNdy_%s_alpha%.2f_cent%d_%d.root",
+        "./rapidity_dNdy/dNdy_%s_alpha%.2f_cent%.1f_%.1f.root",
         System.Data(),
         alpha,
         centMin,
@@ -187,7 +195,7 @@ void readTree(
 
     TFile *fout = new TFile(outfilename,"RECREATE");
 
-    int dy_bin = 50;
+    int dy_bin = 51;
     TH1F *h_b =
         new TH1F("h_b",";b [fm]",100,0,20);
 
@@ -210,6 +218,10 @@ void readTree(
     TH1F *h_dNdy =
         new TH1F("h_dNdy",";y;counts",
             dy_bin,-10,10);
+
+    TH1F *h_dNdy_over_Nw =
+            new TH1F("(1/Nw)dNdy",";y;counts",
+                dy_bin,-10,10);
 
     TH1F *h_dNdyP =
         new TH1F("h_dNdyP",";y;counts",
@@ -272,6 +284,7 @@ void readTree(
 
         // ---- Level-2 ----
         h_dNdy->Fill(y_final);
+        h_dNdy_over_Nw->Fill(y_final);
         //h_y_isProjectile->Fill(y_final, isProjectile);
         if (isProton) h_dNdyP->Fill(y_final);
 
@@ -313,6 +326,8 @@ void readTree(
     h_dNdyB ->Scale(1.0/NeventsSaved, "width");
     h_dNdyAP->Scale(1.0/NeventsSaved, "width");
     h_dNdyAN->Scale(1.0/NeventsSaved, "width");
+
+    h_dNdy_over_Nw->Scale(1.0/Npart_mid/NeventsSaved, "width");
 
 
 //     double y_hi = 0.1;

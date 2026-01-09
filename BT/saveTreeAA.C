@@ -48,9 +48,15 @@ static const CentNpartEntry gCentNpartTable[] = {
     {"62p4", 70, 80,  15.3-2.4,  15.3+2.4},
 
 
-
     // ---------- Pb+Pb 17.3 GeV ----------
-    {"17p3",  0,  5, 352-12, 352+12}//Phys. Rev. Lett. 82, 2471–2475 (1999), arXiv:nucl-ex/9810014.
+    {"17p3_1999",  0,  5, 352-12, 352+12},//Phys. Rev. Lett. 82, 2471–2475 (1999), arXiv:nucl-ex/9810014.
+
+    {"17p3_2011",  0,      5, 357-1, 357+1}, //10.1103/PhysRevC.83.014901
+    {"17p3_2011",  5,   12.5, 288-2, 288+2},
+    {"17p3_2011",  12.5,23.5, 211-3, 211+3},
+    {"17p3_2011",  23.5,33.5, 146-4, 146+4},
+    {"17p3_2011",  33.5,43.5,  85-7,  85+7}
+
 };
 
 bool LookupNpartRange(
@@ -88,8 +94,8 @@ void saveTreeAA(
     const char* target,
     const char* energy,
     double alpha,
-    int centMin,
-    int centMax
+    double centMin,
+    double centMax
 ) {
 
     TString Projectile = projectile;//"Au197pnHFB14"; //Au Au2rw  Au197pnHFB14
@@ -107,7 +113,8 @@ void saveTreeAA(
     double y_beam = -1;
     if      (Energy == "200")  y_beam = 5.36;
     else if (Energy == "62p4") y_beam = 4.20;
-    else if (Energy == "17p3") y_beam = 2.90;
+    else if (Energy == "17p3_1999") y_beam = 2.90;
+    else if (Energy == "17p3_2011") y_beam = 2.90;
     else {
         std::cout << "Error: Unknown energy" << std::endl;
         return;
@@ -124,7 +131,7 @@ void saveTreeAA(
 
     TString outName;
     outName.Form(
-        "tree_%s%s_%s_alpha%.2f_cent%d_%d.root",
+        "tree_%s%s_%s_alpha%.2f_cent%.1f_%.1f.root",
         projectile,
         target,
         energy,

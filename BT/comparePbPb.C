@@ -35,23 +35,26 @@ void comparePbPb() {
     TString files[N] = {
         "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha2.00_cent0_5.root",
         "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha3.00_cent0_5.root",
-        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha3.50_cent0_5.root",
         "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha4.00_cent0_5.root",
-        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha4.50_cent0_5.root"
+        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha5.00_cent0_5.root",
+        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha6.00_cent0_5.root"
     };
 
     //PbPb 17.3 GeV 0~5% ,
 
     TString labels[N] = {
-        "#alpha = 2.00",
-        "#alpha = 3.00",
-        "#alpha = 3.50",
-        "#alpha = 4.00",
-        "#alpha = 4.50"
+        "Scaled #alpha = 2.00",
+        "Scaled #alpha = 3.00",
+        "Scaled #alpha = 4.00",
+        "Scaled #alpha = 5.00",
+        "Scaled #alpha = 6.00"
     };
 
     int colors[N]  = {kBlack, kRed+1, kBlue+1, kGreen+2, kMagenta+2};
     int markers[N] = {20, 21, 22, 33, 29};
+    double scale[N] = {0.3668, 0.3679, 0.4284, 0.5073, 0.5952};
+
+    //double scale[N] = {0.3668, 0.3679, 0.3906, 0.4284, 0.4640}; // 2 3 3.5 4 4.5
 
     /* ---------- Canvas ---------- */
     auto* c1 = new TCanvas("c1", "Rapidity loss comparison", 1200, 800);
@@ -62,7 +65,7 @@ void comparePbPb() {
     /* ---------- Frame ---------- */
     TH1F* frame = c1->DrawFrame(
         -1.1, 15,  //xmin ymin
-         3.0, 50   //xmax ymax
+         3.0, 80   //xmax ymax
     );
 
     frame->SetTitle("PbPb 17.3 GeV 0~5%");
@@ -76,7 +79,7 @@ void comparePbPb() {
 
     /* ---------- Legend ---------- */
     auto* leg = new TLegend(0.15, 0.58, 0.48, 0.88);
-    leg->AddEntry((TObject*)0, "Nucleon Scaled #times 0.48","");  
+    //leg->AddEntry((TObject*)0, "Nucleon Scaled #times 0.48","");  
     leg->SetBorderSize(0);
     leg->SetFillStyle(0);
     leg->SetTextFont(42);
@@ -91,7 +94,7 @@ void comparePbPb() {
             continue;
         }
 
-        TH1F* h = (TH1F*)f->Get("h_dNdy");
+        TH1F* h = (TH1F*)f->Get("h_dNdyA");
         if (!h) {
             std::cerr << "Histogram h_dNdy not found in "
                       << files[i] << std::endl;
@@ -101,7 +104,8 @@ void comparePbPb() {
 
         // 防止文件关闭后 histogram 消失
         h->SetDirectory(0);
-        h->Scale(0.48);
+        //h->Scale(0.5);
+        //h->Scale(scale[i]);
 
         styleHist(h, colors[i], markers[i]);
         h->Draw("HIST C SAME");
