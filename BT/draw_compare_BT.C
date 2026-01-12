@@ -133,10 +133,12 @@ void draw_compare_BT() {
             leg->SetTextSize(0.055);
 
             leg->AddEntry(grExp, "NA49 (2011)", "p");
-            leg->AddEntry((TObject*)0, "#alpha = 3, 4, 5", "");
+            TLegendEntry* e =
+            leg->AddEntry((TObject*)0, "Scale with #alpha = 5", "");
+            e->SetTextColor(kRed+1);
             leg->Draw();
         }
     }
 
-    c->SaveAs("compare_NA49_vs_model_BT.root");
+    c->SaveAs("compare_NA49_vs_model_BT_ScaleA5.root");
 }
