@@ -82,20 +82,30 @@ void drawExpData_dNdy_overNw() {
     /* ---------- 生成 Graph ---------- */
     auto* gr_NA49_17p3_1999 = makeGraphError(
         NA491999_PbPb_17p3GeV_005_netP_005Cent_dNdy,
-        "NA49_17p3GeV_1999"
+        "NA49_17p3GeV_1999_netP"
+    );
+
+    auto* gr_NA49_17p3_1999_netB = makeGraphError(
+        NA491999_PbPb_17p3GeV_005_netB_005Cent_dNdy,
+        "NA49_17p3GeV_1999_netB"
     );
 
     auto* gr_NA49_17p3_2011 = makeGraphError(
-        NA492011_PbPb_17p3GeV_005_netP_005Cent_dNdy,
-        "NA49_17p3GeV_2011"
+        NA492011_PbPb_17p3GeV_C0_netP_dNdy,
+        "NA49_17p3GeV_2011_netP"
     );
 
     auto* gr_NA49_17p3_1999_mirror =
-    (TGraphErrors*) gr_NA49_17p3_1999->Clone("NA49_17p3GeV_1999_mirror");
+    (TGraphErrors*) gr_NA49_17p3_1999->Clone("NA49_17p3GeV_1999_netP_mirror");
+
+    auto* gr_NA49_17p3_1999_mirror_netB =
+    (TGraphErrors*) gr_NA49_17p3_1999_netB->Clone("NA49_17p3GeV_1999_netB_mirror");
 
     auto* gr_NA49_17p3_2011_mirror =
-    (TGraphErrors*) gr_NA49_17p3_2011->Clone("NA49_17p3GeV_2011_mirror");
+    (TGraphErrors*) gr_NA49_17p3_2011->Clone("NA49_17p3GeV_2011_netP_mirror");
+    
     mirrorGraphX(gr_NA49_17p3_1999_mirror);
+    mirrorGraphX(gr_NA49_17p3_1999_mirror_netB);
     mirrorGraphX(gr_NA49_17p3_2011_mirror);
 
 
@@ -107,6 +117,8 @@ void drawExpData_dNdy_overNw() {
     styleGraph(gr_NA49_17p3_1999_mirror, kBlack, 25); // open square  
     styleGraph(gr_NA49_17p3_2011_mirror, kRed,   24); // ○  open circle    
 
+    styleGraph(gr_NA49_17p3_1999_netB       ,  kBlack,    21);
+    styleGraph(gr_NA49_17p3_1999_mirror_netB, kBlack, 25);
 
     /* ---------- Canvas ---------- */
     auto* c1 = new TCanvas("c1", "net-proton dN/dy", 1200, 800);
@@ -143,8 +155,8 @@ void drawExpData_dNdy_overNw() {
     leg->SetTextFont(42);
     leg->SetTextSize(0.035);
 
-    leg->AddEntry(gr_NA49_17p3_1999,  "NA49(1999) Pb+Pb 17.3 GeV", "p");
-    leg->AddEntry(gr_NA49_17p3_2011,  "NA49(2011) Pb+Pb 17.3 GeV", "p");
+    leg->AddEntry(gr_NA49_17p3_1999,  "NA49(1999) Pb+Pb 17.3 GeV net-Proton ", "p");
+    leg->AddEntry(gr_NA49_17p3_2011,  "NA49(2011) Pb+Pb 17.3 GeV net-Proton ", "p");
 
     leg->Draw();
 
@@ -153,6 +165,10 @@ void drawExpData_dNdy_overNw() {
     gr_NA49_17p3_2011->Write();
     gr_NA49_17p3_1999_mirror->Write();
     gr_NA49_17p3_2011_mirror->Write();
+    
+
+    gr_NA49_17p3_1999_netB       ->Write();
+    gr_NA49_17p3_1999_mirror_netB->Write();
     //frame->Write();
     c1->Write();
 

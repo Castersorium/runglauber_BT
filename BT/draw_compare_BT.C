@@ -29,8 +29,9 @@ void draw_compare_BT() {
     /* ---------- centrality tags ---------- */
     const int Ncent = 5;
     const char* centTag[Ncent] = {"C0", "C1", "C2", "C3", "C4"};
-    //const double scale[Ncent] = {0.43, 0.4387, 0.454, 0.461, 0.596};//alpha=4
-    const double scale[Ncent] = {0.510,0.516, 0.5336,0.536,0.6989};//alpha5
+    //const double scale[Ncent] =   {  0.5,    0.5,    0.5,   0.5,    0.5};// Half Isospin
+    //const double scale[Ncent] = { 0.43, 0.4387,  0.454, 0.461,  0.596};// alpha = 4.0
+    //const double scale[Ncent] = {0.510,  0.516, 0.5336, 0.536, 0.6989};// alpha = 5.0
     const char* centRange[Ncent] = {
         "0-5%", "5-12.5%", "12.5-23.5%", "23.5-33.5%", "33.5-43.5%"
     };
@@ -49,10 +50,11 @@ void draw_compare_BT() {
 
         c->cd(ic + 1);
         gPad->SetTicks();
-        gPad->SetLeftMargin(0.15);
+        gPad->SetLeftMargin(0.25);
+        gPad->SetRightMargin(0.005);
         gPad->SetBottomMargin(0.15);
 
-        if (ic != 0) gPad->SetLeftMargin(0.08);
+        if (ic != 0) gPad->SetLeftMargin(0.001);
 
         /* ---------- 空 frame ---------- */
         TH1F* frame = gPad->DrawFrame(
@@ -61,7 +63,8 @@ void draw_compare_BT() {
         );
         frame->SetTitle(Form("Centrality %s", centRange[ic]));
         frame->GetXaxis()->SetTitle("y");
-        frame->GetYaxis()->SetTitle("(1/N_{w}) dN/dy");
+        frame->GetXaxis()->CenterTitle();
+        frame->GetYaxis()->SetTitle("(1/<N_{w}>) dN/dy");
 
         frame->GetXaxis()->SetTitleSize(0.07);
         frame->GetYaxis()->SetTitleSize(0.07);
@@ -82,8 +85,8 @@ void draw_compare_BT() {
         } else {
             grExp->SetMarkerStyle(20);
             grExp->SetMarkerSize(1.4);
-            grExp->SetMarkerColor(kBlack);
-            grExp->SetLineColor(kBlack);
+            grExp->SetMarkerColor(kRed);
+            grExp->SetLineColor(kRed);
             grExp->Draw("P SAME");
         }
 
@@ -127,14 +130,14 @@ void draw_compare_BT() {
 
         /* ---------- Legend（只在第一个 pad 画） ---------- */
         if (ic == 0) {
-            TLegend* leg = new TLegend(0.20, 0.65, 0.90, 0.90);
+            TLegend* leg = new TLegend(0.30, 0.65, 0.90, 0.90);
             leg->SetBorderSize(0);
             leg->SetFillStyle(0);
             leg->SetTextSize(0.055);
 
             leg->AddEntry(grExp, "NA49 (2011)", "p");
             TLegendEntry* e =
-            leg->AddEntry((TObject*)0, "Scale with #alpha = 5", "");
+            leg->AddEntry((TObject*)0, "Scale: #alpha = 5 at y #approx 0 ", "");
             e->SetTextColor(kRed+1);
             leg->Draw();
         }

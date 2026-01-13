@@ -11,3 +11,5 @@ old_test
 tree_*
 
 ~$*
+
+.vscode

@@ -24,7 +24,7 @@ void styleHist(TH1* h, int color, int marker) {
 /*------------------------------------------
   主程序
 ------------------------------------------*/
-void comparePbPb() {
+void comparePbPb_netB() {
 
     gStyle->SetOptStat(0);
     gStyle->SetTitleFont(42, "XYZ");
@@ -33,11 +33,11 @@ void comparePbPb() {
     /* ---------- 文件与参数 ---------- */
     const int N = 5;
     TString files[N] = {
-        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha2.00_cent0_5.root",
-        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha3.00_cent0_5.root",
-        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha4.00_cent0_5.root",
-        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha5.00_cent0_5.root",
-        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_alpha6.00_cent0_5.root"
+        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_1999_alpha2.00_cent0.0_5.0.root",
+        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_1999_alpha3.00_cent0.0_5.0.root",
+        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_1999_alpha4.00_cent0.0_5.0.root",
+        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_1999_alpha5.00_cent0.0_5.0.root",
+        "./rapidity_dNdy/dNdy_PbpnrwPbpnrw_17p3_1999_alpha6.00_cent0.0_5.0.root"
     };
 
     //PbPb 17.3 GeV 0~5% ,
@@ -64,13 +64,13 @@ void comparePbPb() {
 
     /* ---------- Frame ---------- */
     TH1F* frame = c1->DrawFrame(
-        -1.1, 15,  //xmin ymin
-         3.0, 80   //xmax ymax
+        -3.0, 15,  //xmin ymin
+         3.0, 90   //xmax ymax
     );
 
     frame->SetTitle("PbPb 17.3 GeV 0~5%");
     frame->GetXaxis()->SetTitle("y");
-    frame->GetYaxis()->SetTitle("dN/dy");
+    frame->GetYaxis()->SetTitle("dN/dy_{B-#bar{B}}");
 
     frame->GetXaxis()->SetTitleSize(0.045);
     frame->GetYaxis()->SetTitleSize(0.045);
@@ -79,7 +79,7 @@ void comparePbPb() {
 
     /* ---------- Legend ---------- */
     auto* leg = new TLegend(0.15, 0.58, 0.48, 0.88);
-    //leg->AddEntry((TObject*)0, "Nucleon Scaled #times 0.48","");  
+    //leg->AddEntry((TObject*)0, "Net-proton = Net-nucleon #times 0.5","");  
     leg->SetBorderSize(0);
     leg->SetFillStyle(0);
     leg->SetTextFont(42);
@@ -108,10 +108,10 @@ void comparePbPb() {
         //h->Scale(scale[i]);
 
         styleHist(h, colors[i], markers[i]);
-        h->Draw("HIST C SAME");
+        h->Draw("HIST C  SAME");
  
-        leg->AddEntry(h, labels[i], "l p");
         
+        leg->AddEntry(h, labels[i], "l p");
 
         f->Close();
     }
@@ -126,17 +126,13 @@ void comparePbPb() {
     
         const int Nexp = 5;
         TString expNames[Nexp] = {
-            "NA49_17p3GeV_1999",
-            "NA49_17p3GeV_2011",
-            "NA49_17p3GeV_1999_mirror",
-            "NA49_17p3GeV_2011_mirror"
+            "NA49_17p3GeV_1999_netB",
+            "NA49_17p3GeV_1999_netB_mirror",
         };
     
         TString expLabels[Nexp] = {
-            "NA49(1999) Pb+Pb 17.3 GeV",
-            "NA49(2021) Pb+Pb 17.3 GeV Mirror",
-            "NA49(1999) Pb+Pb 17.3 GeV",
-            "NA49(2021) Pb+Pb 17.3 GeV Mirror"
+            "NA49(1999) Pb+Pb 17.3 GeV net-Baryon",
+            "NA49(1999) Pb+Pb 17.3 GeV net-Baryon Mirror"
         };
     
         for (int i = 0; i < Nexp; ++i) {
@@ -164,5 +160,5 @@ void comparePbPb() {
 
 
     //c1->SaveAs("PbPb_17p3_Valpha_005Cen.pdf");
-    c1->SaveAs("PbPb_17p3_Valpha_005Cen.root");
+    c1->SaveAs("PbPb_17p3_netB_Valpha_005Cen.root");
 }
