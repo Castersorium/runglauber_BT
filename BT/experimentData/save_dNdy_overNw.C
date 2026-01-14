@@ -55,9 +55,9 @@ void normalizeByNw(TGraphErrors* gr, double Nw) {
 /*------------------------------------------
   主函数
 ------------------------------------------*/
-void save_NA49_2011_dNdy_overNw_byCent() {
+void save_dNdy_overNw() {
 
-    TFile* fout = new TFile("NA49_2011_PbPb_17p3GeV_netP_dNdy.root",
+    TFile* fout = new TFile("ExpData_netP_dNdy_overNw.root",
                             "RECREATE");
 
                                 /* ---------- <Nw> values ---------- */
@@ -67,7 +67,14 @@ void save_NA49_2011_dNdy_overNw_byCent() {
     const double Nw_C3 = 146.0;
     const double Nw_C4 = 85.0;
 
-    /* ---------- Centrality C0–C5 ---------- */
+    const double Nw_BRAHMS_62p4 = 314;
+    const double Nw_BRAHMS_200 = 357;
+
+    const double Nw_STAR_62p4 = 346.5;
+    const double Nw_STAR_130 = 344.3;
+    const double Nw_STAR_200 = 350;
+
+    /* ---------- NA49 Centrality C0–C5 ---------- */
 
     /* ---------- C0 ---------- */
     auto* gr_C0 = makeGraphError(
@@ -104,17 +111,62 @@ void save_NA49_2011_dNdy_overNw_byCent() {
     );
     normalizeByNw(gr_C4, Nw_C4);
 
+
+    /* ---------- BRAHMS Au+Au 62.4 GeV, 0–10%, ---------- */
+    auto* gr_BRAHMS_62p4 = makeGraphError(
+        BRAHMS_AuAu_62p4GeV_010_netP,
+        "BRAHMS_AuAu_62p4GeV_010_netP_dNdy_overNw"
+    );
+    normalizeByNw(gr_BRAHMS_62p4, Nw_BRAHMS_62p4);
+
+    /* ---------- BRAHMS Au+Au 200 GeV, 0–5% ---------- */
+    auto* gr_BRAHMS_200 = makeGraphError(
+        BRAHMS_AuAu_200GeV_005_netP,
+        "BRAHMS_AuAu_200GeV_005_netP_dNdy_overNw"
+    );
+    normalizeByNw(gr_BRAHMS_200, Nw_BRAHMS_62p4);
+
+    /* ---------- STAR Au+Au 62.4 GeV, 0–5%, ---------- */
+    auto* gr_STAR_62p4 = makeGraphError(
+        STAR_AuAu_62p4GeV_005_netP,
+        "STAR_AuAu_62p4GeV_005_netP_dNdy_overNw"
+    );
+    normalizeByNw(gr_STAR_62p4, Nw_STAR_62p4);
+
+    /* ---------- STAR Au+Au 130 GeV, 0–6%, ---------- */
+    auto* gr_STAR_130 = makeGraphError(
+        STAR_AuAu_130GeV_006_netP,
+        "STAR_AuAu_130GeV_006_netP_dNdy_overNw"
+    );
+    normalizeByNw(gr_STAR_130, Nw_STAR_130);
+
+    /* ---------- STAR Au+Au 200 GeV, 0–5% ---------- */
+    auto* gr_STAR_200 = makeGraphError(
+        STAR_AuAu_200GeV_005_netP,
+        "STAR_AuAu_200GeV_005_netP_dNdy_overNw"
+    );
+    normalizeByNw(gr_STAR_200, Nw_STAR_200);
+
+
+
     /* ---------- 写入文件 ---------- */
+
+    
     gr_C0->Write();
     gr_C1->Write();
     gr_C2->Write();
     gr_C3->Write();
     gr_C4->Write();
 
+    gr_BRAHMS_62p4  ->Write();   
+    gr_BRAHMS_200   ->Write();  
+    gr_STAR_62p4    ->Write(); 
+    gr_STAR_130     ->Write();
+    gr_STAR_200     ->Write();
 
     fout->Write();
     fout->Close();
 
-    std::cout << "Saved NA49 2011 net-proton dN/dy graphs (C0–C5) into "
+    std::cout << "Saved net-proton (1/<Nw>)dN/dy  graphs into "
               << fout->GetName() << std::endl;
 }
