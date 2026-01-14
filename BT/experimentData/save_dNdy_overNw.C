@@ -60,7 +60,10 @@ void save_dNdy_overNw() {
     TFile* fout = new TFile("ExpData_netP_dNdy_overNw.root",
                             "RECREATE");
 
-                                /* ---------- <Nw> values ---------- */
+    /* ---------- <Nw> values ---------- */
+
+    const double Nw_NA49_1999 = 352;
+
     const double Nw_C0 = 357.0;
     const double Nw_C1 = 288.0;
     const double Nw_C2 = 211.0;
@@ -75,6 +78,13 @@ void save_dNdy_overNw() {
     const double Nw_STAR_200 = 350;
 
     /* ---------- NA49 Centrality C0–C5 ---------- */
+
+    /* ---------- 1999 ---------- */
+    auto* gr_NA49_1999_17p3 = makeGraphError(
+        NA491999_PbPb_17p3GeV_005_netP_005Cent_dNdy,
+        "NA49_1999_17p3GeV_netP_dNdy_overNw"
+    );
+    normalizeByNw(gr_NA49_1999_17p3, Nw_NA49_1999);
 
     /* ---------- C0 ---------- */
     auto* gr_C0 = makeGraphError(
@@ -150,7 +160,8 @@ void save_dNdy_overNw() {
 
 
     /* ---------- 写入文件 ---------- */
-
+    
+    gr_NA49_1999_17p3->Write();
     
     gr_C0->Write();
     gr_C1->Write();

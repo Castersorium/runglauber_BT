@@ -1,8 +1,16 @@
 #!/bin/bash
 
-energy="17p3_1999"
-projectile="Pbpnrw"
-target="Pbpnrw"
+# energy="17p3_1999"
+# projectile="Pbpnrw"
+# target="Pbpnrw"
+
+energy="200_BRAH"
+projectile="Au197pnHFB14"
+target="Au197pnHFB14"
+
+# energy="17p3_1999"
+# projectile="Pbpnrw"
+# target="Pbpnrw"
 
 # alpha 扫描
 alphas=(3.0 4.0 5.0)
@@ -16,8 +24,8 @@ for alpha in "${alphas[@]}"; do
     cmin=${centMins[$i]}
     cmax=${centMaxs[$i]}
 
-    # root -l -b -q \
-    #   "saveTreeAA.C(\"${projectile}\",\"${target}\",\"${energy}\",${alpha},${cmin},${cmax})"
+    root -l -b -q \
+      "saveTreeAA.C(\"${projectile}\",\"${target}\",\"${energy}\",${alpha},${cmin},${cmax})"
     
     root -l -b -q \
       "readTree.C(\"${projectile}\",\"${target}\",\"${energy}\",${alpha},${cmin},${cmax})"
