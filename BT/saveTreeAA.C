@@ -148,7 +148,7 @@ void saveTreeAA(
     TRandom3 *rnd = new TRandom3(0); 
 
     // 3. 参数设置
-    int Read_TotNevents = 1000000;
+    int Read_TotNevents = 500000;
 
     // 读取 ntuple
     TString TreeName = "nt_" + Projectile + "_" + Target;

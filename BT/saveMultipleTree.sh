@@ -1,35 +1,54 @@
 #!/bin/bash
+set -e
 
-# energy="17p3_1999"
-# projectile="Pbpnrw"
-# target="Pbpnrw"
+# ================= User control =================
+ENERGY_MODE="200_BRAH"     # 17p3_NA49 | 62p4_BRAH | 200_BRAH
+ALPHAS=(3.5)        # just edit here
+# ===============================================
 
-energy="200_BRAH"
-projectile="Au197pnHFB14"
-target="Au197pnHFB14"
+case "$ENERGY_MODE" in
+  17p3_NA49)
+    energy="17p3_1999"
+    projectile="Pbpnrw"
+    target="Pbpnrw"
+    centMins=(0)
+    centMaxs=(5)
+    ;;
+  62p4_BRAH)
+    energy="62p4_BRAH"
+    projectile="Au197pnHFB14"
+    target="Au197pnHFB14"
+    centMins=(0)
+    centMaxs=(10)
+    ;;
+  200_BRAH)
+    energy="200_BRAH"
+    projectile="Au197pnHFB14"
+    target="Au197pnHFB14"
+    centMins=(0)
+    centMaxs=(5)
+    ;;
+  *)
+    echo "Unknown ENERGY_MODE: $ENERGY_MODE"
+    exit 1
+    ;;
+esac
 
-# energy="17p3_1999"
-# projectile="Pbpnrw"
-# target="Pbpnrw"
 
-# alpha 扫描
-alphas=(3.0 4.0 5.0)
-
-# 中心度区间（百分比）
-centMins=(0   ) # 5     12.5  23.5  33.5)
-centMaxs=(5   ) # 12.5  23.5  33.5  43.5)
-
-for alpha in "${alphas[@]}"; do
-  for i in ${!centMins[@]}; do
+for alpha in "${ALPHAS[@]}"; do
+  for i in "${!centMins[@]}"; do
     cmin=${centMins[$i]}
     cmax=${centMaxs[$i]}
 
+    echo "Running: ${energy}, alpha=${alpha}, cent=${cmin}-${cmax}%"
+
     root -l -b -q \
       "saveTreeAA.C(\"${projectile}\",\"${target}\",\"${energy}\",${alpha},${cmin},${cmax})"
-    
+
     root -l -b -q \
       "readTree.C(\"${projectile}\",\"${target}\",\"${energy}\",${alpha},${cmin},${cmax})"
 
-    echo "Complete: alpha=${alpha}, cent=${cmin}-${cmax}%"
+    echo "Done."
+    echo "-------------------------------------------"
   done
 done

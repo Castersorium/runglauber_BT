@@ -46,7 +46,7 @@ void normalizeByNw(TGraphErrors* gr, double Nw) {
 
         double ex = gr->GetErrorX(i);
         double ey = gr->GetErrorY(i);
-
+        Nw = 1.0;
         gr->SetPoint(i, x, y / Nw);
         gr->SetPointError(i, ex, ey / Nw);
     }
@@ -57,7 +57,7 @@ void normalizeByNw(TGraphErrors* gr, double Nw) {
 ------------------------------------------*/
 void save_dNdy_overNw() {
 
-    TFile* fout = new TFile("ExpData_netP_dNdy_overNw.root",
+    TFile* fout = new TFile("ExpData_netP_dNdy.root",
                             "RECREATE");
 
     /* ---------- <Nw> values ---------- */
@@ -178,6 +178,6 @@ void save_dNdy_overNw() {
     fout->Write();
     fout->Close();
 
-    std::cout << "Saved net-proton (1/<Nw>)dN/dy  graphs into "
+    std::cout << "Saved net-proton dN/dy  graphs into "
               << fout->GetName() << std::endl;
 }
