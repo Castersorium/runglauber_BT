@@ -182,5 +182,5 @@ void draw_compare_dNdy_energy() {
 
     }
 
-    c->SaveAs("compare_netP_dNdy_overNw_energy.root");
+    c->SaveAs("compare_netP_dNdy_overNw_energy.pdf");
 }
