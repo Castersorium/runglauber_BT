@@ -14,7 +14,8 @@ void draw_compare_dNdy_energy() {
 
     /* ---------- Experimental data ---------- */
     TFile* fExp = TFile::Open(
-        "./experimentData/ExpData_netP_dNdy_overNw.root", "READ"
+       // "./experimentData/ExpData_netP_dNdy.root", "READ"
+         "./experimentData/ExpData_netP_dNdy_overHalfNw.root", "READ"
     );
     if (!fExp || fExp->IsZombie()) {
         std::cerr << "Cannot open experiment data file!" << std::endl;
@@ -34,7 +35,7 @@ void draw_compare_dNdy_energy() {
     const int alphaColor[Nalpha] = {kBlue+1, kMagenta, kGreen+2, kRed+1};
 
     /* ---------- Canvas ---------- */
-    TCanvas* c = new TCanvas("c", "net-proton dN/dy / Nw", 2400, 700);
+    TCanvas* c = new TCanvas("c", "net-proton dN/dy over Nw/2", 2400, 700);
     c->Divide(3,1,0.001,0.001);
 
     /* =========================================================
@@ -50,11 +51,13 @@ void draw_compare_dNdy_energy() {
 
         TH1F* frame = gPad->DrawFrame(
             -6.0, 0.0,
-             6.0, 0.2
+             6.0, 0.3
         );
         frame->SetTitle(energyLabel[ie]);
         frame->GetXaxis()->SetTitle("y");
-        frame->GetYaxis()->SetTitle("(1/<N_{w}>)dN/dy");
+        frame->GetXaxis()->CenterTitle();
+        //frame->GetYaxis()->SetTitle("dN(p-#bar{p})/dy");
+        frame->GetYaxis()->SetTitle("(2/<N_{w}>)dN/dy");
 
         frame->GetXaxis()->SetTitleSize(0.07);
         frame->GetYaxis()->SetTitleSize(0.07);
@@ -62,7 +65,7 @@ void draw_compare_dNdy_energy() {
         frame->GetYaxis()->SetLabelSize(0.03);
 
 
-        TLegend* leg = new TLegend(0.28,0.60,0.88,0.85);
+        TLegend* leg = new TLegend(0.28,0.65,0.88,0.85);
         leg->SetBorderSize(0);
         leg->SetFillStyle(0);
         //leg->SetTextSize(0.055);
@@ -91,8 +94,8 @@ void draw_compare_dNdy_energy() {
                 g11->Draw("P SAME");
             }
 
-            leg->AddEntry(g99,"NA49 1999","p");
-            leg->AddEntry(g11,"NA49 2011","p");
+            leg->AddEntry(g99,"NA49 1999 0~5%","p");
+            leg->AddEntry(g11,"NA49 2011 0~5%","p");
         }
 
         if (ie == 1) {
@@ -113,8 +116,8 @@ void draw_compare_dNdy_energy() {
             g62S->Draw("P SAME");
             }
 
-            leg->AddEntry(g62B,"BRAHMS","p");
-            leg->AddEntry(g62S,"STAR","p");
+            leg->AddEntry(g62B,"BRAHMS 0~10%","p");
+            leg->AddEntry(g62S,"STAR 0~5%","p");
         }
 
         if (ie == 2) {
@@ -135,8 +138,8 @@ void draw_compare_dNdy_energy() {
                 g200S->Draw("P SAME");
         }
 
-        leg->AddEntry(g200B,"BRAHMS","p");
-        leg->AddEntry(g200S,"STAR","p");
+        leg->AddEntry(g200B,"BRAHMS 0~5%","p");
+        leg->AddEntry(g200S,"STAR   0~5%","p");
         }
 
         /* ---------- Model ---------- */
@@ -158,7 +161,8 @@ void draw_compare_dNdy_energy() {
 
             h->SetDirectory(0);
             h->SetLineColor(alphaColor[ia]);
-            h->Scale(scale[ia]);
+            // h->Scale(scale[ia]);
+            //h->Scale(0.5);
             h->SetLineWidth(2);
             h->SetFillStyle(0);
             h->Draw("HIST C SAME");
@@ -168,8 +172,6 @@ void draw_compare_dNdy_energy() {
 
             fM->Close();
         }
-
-
 
 
             // leg->AddEntry((TObject*)0,"Experiment","p");
@@ -182,5 +184,5 @@ void draw_compare_dNdy_energy() {
 
     }
 
-    c->SaveAs("compare_netP_dNdy_overNw_energy.pdf");
+    c->SaveAs("compare_netP_dNdy_overHalfNw_energy.pdf");
 }

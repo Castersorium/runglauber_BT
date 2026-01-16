@@ -46,18 +46,33 @@ void normalizeByNw(TGraphErrors* gr, double Nw) {
 
         double ex = gr->GetErrorX(i);
         double ey = gr->GetErrorY(i);
-        Nw = 1.0;
+        //Nw = 1.0;
+        //Nw = 0.5 * Nw;
         gr->SetPoint(i, x, y / Nw);
         gr->SetPointError(i, ex, ey / Nw);
     }
 }
 
+void normalizeByHalfNw(TGraphErrors* gr, double Nw) {
+    int n = gr->GetN();
+    for (int i = 0; i < n; ++i) {
+        double x, y;
+        gr->GetPoint(i, x, y);
+
+        double ex = gr->GetErrorX(i);
+        double ey = gr->GetErrorY(i);
+        //Nw = 1.0;
+        //Nw =  * Nw;
+        gr->SetPoint(i, x, 2 * y / Nw);
+        gr->SetPointError(i, ex, 2 * ey / Nw);
+    }
+}
 /*------------------------------------------
   主函数
 ------------------------------------------*/
 void save_dNdy_overNw() {
 
-    TFile* fout = new TFile("ExpData_netP_dNdy.root",
+    TFile* fout = new TFile("ExpData_netP_dNdy_overHalfNw.root",
                             "RECREATE");
 
     /* ---------- <Nw> values ---------- */
@@ -75,7 +90,7 @@ void save_dNdy_overNw() {
 
     const double Nw_STAR_62p4 = 346.5;
     const double Nw_STAR_130 = 344.3;
-    const double Nw_STAR_200 = 350;
+    const double Nw_STAR_200 = 350.6;
 
     /* ---------- NA49 Centrality C0–C5 ---------- */
 
@@ -84,42 +99,42 @@ void save_dNdy_overNw() {
         NA491999_PbPb_17p3GeV_005_netP_005Cent_dNdy,
         "NA49_1999_17p3GeV_netP_dNdy_overNw"
     );
-    normalizeByNw(gr_NA49_1999_17p3, Nw_NA49_1999);
+    normalizeByHalfNw(gr_NA49_1999_17p3, Nw_NA49_1999);
 
     /* ---------- C0 ---------- */
     auto* gr_C0 = makeGraphError(
         NA492011_PbPb_17p3GeV_C0_netP_dNdy,
         "NA49_2011_17p3GeV_netP_dNdy_overNw_C0"
     );
-    normalizeByNw(gr_C0, Nw_C0);
+    normalizeByHalfNw(gr_C0, Nw_C0);
 
     /* ---------- C1 ---------- */
     auto* gr_C1 = makeGraphError(
         NA492011_PbPb_17p3GeV_C1_netP_dNdy,
         "NA49_2011_17p3GeV_netP_dNdy_overNw_C1"
     );
-    normalizeByNw(gr_C1, Nw_C1);
+    normalizeByHalfNw(gr_C1, Nw_C1);
 
     /* ---------- C2 ---------- */
     auto* gr_C2 = makeGraphError(
         NA492011_PbPb_17p3GeV_C2_netP_dNdy,
         "NA49_2011_17p3GeV_netP_dNdy_overNw_C2"
     );
-    normalizeByNw(gr_C2, Nw_C2);
+    normalizeByHalfNw(gr_C2, Nw_C2);
 
     /* ---------- C3 ---------- */
     auto* gr_C3 = makeGraphError(
         NA492011_PbPb_17p3GeV_C3_netP_dNdy,
         "NA49_2011_17p3GeV_netP_dNdy_overNw_C3"
     );
-    normalizeByNw(gr_C3, Nw_C3);
+    normalizeByHalfNw(gr_C3, Nw_C3);
 
     /* ---------- C4 ---------- */
     auto* gr_C4 = makeGraphError(
         NA492011_PbPb_17p3GeV_C4_netP_dNdy,
         "NA49_2011_17p3GeV_netP_dNdy_overNw_C4"
     );
-    normalizeByNw(gr_C4, Nw_C4);
+    normalizeByHalfNw(gr_C4, Nw_C4);
 
 
     /* ---------- BRAHMS Au+Au 62.4 GeV, 0–10%, ---------- */
@@ -127,35 +142,35 @@ void save_dNdy_overNw() {
         BRAHMS_AuAu_62p4GeV_010_netP,
         "BRAHMS_AuAu_62p4GeV_010_netP_dNdy_overNw"
     );
-    normalizeByNw(gr_BRAHMS_62p4, Nw_BRAHMS_62p4);
+    normalizeByHalfNw(gr_BRAHMS_62p4, Nw_BRAHMS_62p4);
 
     /* ---------- BRAHMS Au+Au 200 GeV, 0–5% ---------- */
     auto* gr_BRAHMS_200 = makeGraphError(
         BRAHMS_AuAu_200GeV_005_netP,
         "BRAHMS_AuAu_200GeV_005_netP_dNdy_overNw"
     );
-    normalizeByNw(gr_BRAHMS_200, Nw_BRAHMS_62p4);
+    normalizeByHalfNw(gr_BRAHMS_200, Nw_BRAHMS_62p4);
 
     /* ---------- STAR Au+Au 62.4 GeV, 0–5%, ---------- */
     auto* gr_STAR_62p4 = makeGraphError(
         STAR_AuAu_62p4GeV_005_netP,
         "STAR_AuAu_62p4GeV_005_netP_dNdy_overNw"
     );
-    normalizeByNw(gr_STAR_62p4, Nw_STAR_62p4);
+    normalizeByHalfNw(gr_STAR_62p4, Nw_STAR_62p4);
 
     /* ---------- STAR Au+Au 130 GeV, 0–6%, ---------- */
     auto* gr_STAR_130 = makeGraphError(
         STAR_AuAu_130GeV_006_netP,
         "STAR_AuAu_130GeV_006_netP_dNdy_overNw"
     );
-    normalizeByNw(gr_STAR_130, Nw_STAR_130);
+    normalizeByHalfNw(gr_STAR_130, Nw_STAR_130);
 
     /* ---------- STAR Au+Au 200 GeV, 0–5% ---------- */
     auto* gr_STAR_200 = makeGraphError(
         STAR_AuAu_200GeV_005_netP,
         "STAR_AuAu_200GeV_005_netP_dNdy_overNw"
     );
-    normalizeByNw(gr_STAR_200, Nw_STAR_200);
+    normalizeByHalfNw(gr_STAR_200, Nw_STAR_200);
 
 
 
@@ -178,6 +193,6 @@ void save_dNdy_overNw() {
     fout->Write();
     fout->Close();
 
-    std::cout << "Saved net-proton dN/dy  graphs into "
+    std::cout << "Saved net-proton dN/dy over Nw graphs into "
               << fout->GetName() << std::endl;
 }

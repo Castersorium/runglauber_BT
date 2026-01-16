@@ -42,7 +42,7 @@ void draw_compare_BT() {
     const int alphaColor[Nalpha] = {kBlue+1, kGreen+2, kRed+1};
 
     /* ---------- Canvas ---------- */
-    TCanvas* c = new TCanvas("c", "NA49 vs Model", 2500, 600);
+    TCanvas* c = new TCanvas("c", "NA49 vs Model", 3000, 1000);
     c->Divide(5, 1, 0.001, 0.001);
 
     /* ---------- Loop over centrality ---------- */
