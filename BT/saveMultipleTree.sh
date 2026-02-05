@@ -2,8 +2,8 @@
 set -e
 
 # ================= User control =================
-ENERGY_MODE="200_BRAH"     # 17p3_NA49 | 62p4_BRAH | 200_BRAH
-ALPHAS=(3.5)        # just edit here
+ENERGY_MODE=( "62p4_STAR" )   # 17p3_NA49 | 62p4_BRAH | 200_BRAH
+ALPHAS=(3.0 4.0 5.0)        # just edit here
 # ===============================================
 
 case "$ENERGY_MODE" in
@@ -21,12 +21,26 @@ case "$ENERGY_MODE" in
     centMins=(0)
     centMaxs=(10)
     ;;
+  62p4_STAR)
+    energy="62p4_STAR"
+    projectile="Au197pnHFB14"
+    target="Au197pnHFB14"
+    centMins=(0)
+    centMaxs=(80)
+    ;;
   200_BRAH)
     energy="200_BRAH"
     projectile="Au197pnHFB14"
     target="Au197pnHFB14"
     centMins=(0)
     centMaxs=(5)
+    ;;
+  200_STAR)
+    energy="200_STAR"
+    projectile="Au197pnHFB14"
+    target="Au197pnHFB14"
+    centMins=(0)
+    centMaxs=(80)
     ;;
   *)
     echo "Unknown ENERGY_MODE: $ENERGY_MODE"

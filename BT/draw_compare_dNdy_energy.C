@@ -31,8 +31,8 @@ void draw_compare_dNdy_energy() {
     /* ---------- Alpha ---------- */
     const int Nalpha = 4;
     const double alphaVal[Nalpha] = {3.0, 3.5, 4.0, 5.0};
-    const double scale[Nalpha] = { 0.510, 0.510,  0.510, 0.510};
-    const int alphaColor[Nalpha] = {kBlue+1, kMagenta, kGreen+2, kRed+1};
+    const double scale[Nalpha]    = { 0.510, 0.510,  0.510, 0.510};
+    const int alphaColor[Nalpha]  = {kBlue+1, kMagenta, kGreen+2, kRed+1};
 
     /* ---------- Canvas ---------- */
     TCanvas* c = new TCanvas("c", "net-proton dN/dy over Nw/2", 2400, 700);
