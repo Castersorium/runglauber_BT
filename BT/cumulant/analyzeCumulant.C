@@ -6,7 +6,7 @@
 
 void analyzeCumulant() {
     // 1. 打开 ROOT 文件
-    TFile* f = TFile::Open("../rapidityTree/tree_Au197pnHFB14Au197pnHFB14_200_STAR_alpha3.00_cent0.0_80.0.root");
+    TFile* f = TFile::Open("../rapidityTree/tree_Au197pnHFB14Au197pnHFB14_200_STAR_alpha3.00_cent0.0_5.0.root");
     if (!f || f->IsZombie()) {
         std::cout << "❌ Cannot open file!" << std::endl;
         return;
@@ -42,9 +42,14 @@ void analyzeCumulant() {
 
     for (Long64_t i = 0; i < nentries; ++i) {
         t->GetEntry(i);
+        baryon_count.try_emplace(evt, 0); // 确保每个 event 都存在
+    }
+
+    for (Long64_t i = 0; i < nentries; ++i) {
+        t->GetEntry(i);
         if ( y_final > ycut_low && y_final < ycut_high) {
 
-            std::cout << "evt= " << evt << std::endl;
+            // std::cout << "evt= " << evt << std::endl;
             baryon_count[evt]++;
         }
     }
