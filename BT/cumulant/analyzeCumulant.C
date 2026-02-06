@@ -6,7 +6,7 @@
 
 void analyzeCumulant() {
     // 1. 打开 ROOT 文件
-    TFile* f = TFile::Open("../rapidityTree/tree_Au197pnHFB14Au197pnHFB14_200_STAR_alpha3.00_cent0.0_5.0.root");
+    TFile* f = TFile::Open("../rapidityTree/tree_Au197pnHFB14Au197pnHFB14_200_STAR_alpha3.00_cent0.0_80.0.root");
     if (!f || f->IsZombie()) {
         std::cout << "❌ Cannot open file!" << std::endl;
         return;
@@ -24,10 +24,11 @@ void analyzeCumulant() {
     int    evt, Ncoll;
     bool   isProton;
     double y_final, alpha;
-    double w = 5.0;
+    double w = 0.5;
 
     t->SetBranchAddress("evt", &evt);
     t->SetBranchAddress("Ncoll", &Ncoll);
+    t->SetBranchAddress("Npart", &Npart);
     t->SetBranchAddress("isProton", &isProton);
     t->SetBranchAddress("y_final", &y_final);
     t->SetBranchAddress("alpha", &alpha);
@@ -42,11 +43,12 @@ void analyzeCumulant() {
 
     for (Long64_t i = 0; i < nentries; ++i) {
         t->GetEntry(i);
-        baryon_count.try_emplace(evt, 0); // 确保每个 event 都存在
+         // 确保每个 event 都存在
     }
 
     for (Long64_t i = 0; i < nentries; ++i) {
         t->GetEntry(i);
+        baryon_count.try_emplace(evt, 0);
         if ( y_final > ycut_low && y_final < ycut_high) {
 
             // std::cout << "evt= " << evt << std::endl;
