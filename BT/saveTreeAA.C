@@ -128,7 +128,11 @@ void saveTreeAA(
     //double alpha = 3.0; 
 
     // 1. 打开 TGlauber 输出文件
-    TFile *fin = TFile::Open("./nucleonGeneratedData/" + System + "_nucleons_1M.root");
+    // TFile *fin = TFile::Open("./nucleonGeneratedData/" + System + "_nucleons_1M.root");
+    // TFile *fin = TFile::Open(System + "_nucleons_10k.root");
+    // TFile *fin = TFile::Open("AuAu197pnHFB14_62p4_STAR_nucleons_10k.root");
+    // TFile *fin = TFile::Open("AuAu197pnHFB14_62p4_nucleons_10k.root");
+    TFile *fin = TFile::Open("AuAu197pnHFB14_200_nucleons_10k.root");
     if (!fin || fin->IsZombie()) { 
         std::cout << "Error: Cannot open file\n"; 
         return; 
@@ -151,7 +155,7 @@ void saveTreeAA(
     TRandom3 *rnd = new TRandom3(0); 
 
     // 3. 参数设置
-    int Read_TotNevents = 100000;
+    int Read_TotNevents = 10000;
 
     // 读取 ntuple
     TString TreeName = "nt_" + Projectile + "_" + Target;
@@ -168,20 +172,22 @@ void saveTreeAA(
 
     TTree* tout = new TTree("t", "Rapidity loss tree");
 
-    int    out_evt;
-    int    out_Npart,out_Ncoll;
-    double out_b;
-    bool   isProton,isProjectile;
-    double y_init, y_final, dy;
+    Int_t  Mult;
+    Int_t  out_evt;
+    Int_t  out_Npart;
+    Float_t out_b;
+    std::vector<int>    isProton,isProjectile,out_Ncoll;
+    std::vector<float>  y_init, y_final, dy;
 
-    tout->Branch("evt",   &out_evt);
-    tout->Branch("Npart", &out_Npart);
-    tout->Branch("Ncoll", &out_Ncoll);
-    tout->Branch("b",     &out_b);
-    tout->Branch("alpha",   &alpha);
+    tout->Branch("nMultiplicityTree",&Mult,"nMultiplicityTree/I");
+    tout->Branch("evt",   &out_evt,"evt/I");
+    tout->Branch("Npart", &out_Npart,"Npart/I");
+    tout->Branch("b",     &out_b,"b/F");
+    tout->Branch("alpha",   &alpha,"alpha/F");
 
     tout->Branch("isProton", &isProton);
     tout->Branch("isProjectile", &isProjectile);
+    tout->Branch("Ncoll", &out_Ncoll);
 
     tout->Branch("y_init",  &y_init);
     tout->Branch("y_final", &y_final);
@@ -191,31 +197,33 @@ void saveTreeAA(
     // Loop over event
     for (int evt = 0; evt < Read_TotNevents; evt++) {
 
-        out_evt = evt; 
-
         if (evt % 5000 == 0){
             std::cout << "Processing  " << evt << "#th events" << std::endl;
         }
         nt->GetEntry(evt);
         //if(b>3.31) continue; // 0~5% 10.1103/PhysRevC.79.034909
         if((in_Npart>npartMax) || (in_Npart<npartMin)) continue;
-        out_Npart = in_Npart; out_b = in_b;
 
         TString arrname = Form("nucleonarray%d", evt);
         TObjArray *arr = (TObjArray*)fin->Get(arrname);
 
         if (!arr) { std::cout << "❌ Cannot find " << arrname << std::endl; return; }       
 
+        isProton.clear(),isProjectile.clear(),out_Ncoll.clear();
+        y_init.clear(), y_final.clear(), dy.clear();
+
+        Mult = 0; // ++
+        out_evt = evt;
+        out_Npart = in_Npart; out_b = in_b;
         // Loop over nucleons
         for (int i=0;i<arr->GetEntriesFast();i++) {
             TGlauNucleon *nuc = (TGlauNucleon*)arr->At(i);
             if (!nuc) continue;
             
             int ncoll = nuc->GetNColl();
-
-
             if (ncoll == 0) continue;
-            out_Ncoll = ncoll;
+            Mult++;
+            out_Ncoll.push_back(ncoll);
 
             double delta_y_total = 0;
             double y_curr = y_beam;
@@ -223,18 +231,19 @@ void saveTreeAA(
 
             // First Collision (p+p)
             double delta_y1 = rnd->Exp(1.0);
+            if( delta_y1 > (2*y_beam) ) delta_y1 = 2*y_beam; // 确保不会过度碰撞，即原本delta_y1 > 2*y_beam
             delta_y_total = delta_y_total + delta_y1;
 
             //Fill Ncoll
             if(nuc->IsInNucleusA()){      
                 // projectile first rapidity
-                y_init = y_beam;
+                y_init.push_back(y_beam);
                 y_curr = y_curr - delta_y1; 
             }
 
             if (nuc->IsInNucleusB()){          
                 // target first rapidity
-                y_init = -y_beam;
+                y_init.push_back(-y_beam);
                 y_curr = -y_curr + delta_y1;           
             }
 
@@ -243,32 +252,39 @@ void saveTreeAA(
                 double delta_yi = rnd->Exp(1.0 / alpha);
                 if(nuc->IsInNucleusA()){        
                     // projectile sequential rapidity
+                    if( delta_yi > (y_beam+y_curr) ) delta_yi = y_beam+y_curr; // 确保不会过度碰撞，即原本y_beam被撞至小于-y_beam
                     y_curr = y_curr - delta_yi;              
                 }
     
                 if (nuc->IsInNucleusB()){              
                     // target sequential rapidity
+                    if( delta_yi > (y_beam-y_curr) ) delta_yi = y_beam-y_curr; // 确保不会过度碰撞，即原本-y_beam被撞至大于y_beam
                     y_curr = y_curr + delta_yi; // Dont need to flip second time              
                 }
 
                 delta_y_total = delta_y_total + delta_yi;
-                dy = delta_y_total;
             }
+            dy.push_back(delta_y_total);
 
-            y_final = y_curr;
+            y_final.push_back(y_curr);
 
-            isProton=0; isProjectile=0;
             if(nuc->IsInNucleusA()){        
-                isProjectile = 1;
-            } 
+                isProjectile.push_back(1);
+            }
+            else{
+                isProjectile.push_back(0);
+            }
 
             if(nuc->IsProton()){        
-                isProton = 1;     
+                isProton.push_back(1);     
             }
-            tout->Fill();
+            else{
+                isProton.push_back(0);
+            }
 
 
         }
+        tout->Fill();
         
     }
 

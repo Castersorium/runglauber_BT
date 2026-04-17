@@ -175,20 +175,24 @@ void readTree(
 
     TTree* tout = new TTree("t", "Rapidity loss tree");
 
-    int    evt, Ncoll, Npart;
-    bool   isProton,isProjectile;
-    double y_init, y_final, dy, b;
-    //double alpha;
+    int    evt, Npart;
+    Int_t  Mult;
+    float  b;
+    std::vector<int>*   isProton = nullptr;
+    std::vector<int>*   isProjectile = nullptr;
+    std::vector<int>*   Ncoll = nullptr;
+    std::vector<float>* y_final = nullptr;
+    std::vector<float>* dy = nullptr;
     
-    t->SetBranchAddress("evt", &evt);
-    t->SetBranchAddress("Ncoll", &Ncoll);
-    t->SetBranchAddress("Npart", &Npart);
-    t->SetBranchAddress("b", &b);
-    t->SetBranchAddress("isProton", &isProton);
-    t->SetBranchAddress("isProjectile", &isProjectile);
-    t->SetBranchAddress("y_final", &y_final);
-    //t->SetBranchAddress("alpha", &alpha);
-    t->SetBranchAddress("dy", &dy);
+    t->SetBranchAddress("nMultiplicityTree",&Mult        );
+    t->SetBranchAddress("evt",              &evt         );
+    t->SetBranchAddress("Ncoll",            &Ncoll       );
+    t->SetBranchAddress("Npart",            &Npart       );
+    t->SetBranchAddress("b",                &b           );
+    t->SetBranchAddress("isProton",         &isProton    );
+    t->SetBranchAddress("isProjectile",     &isProjectile);
+    t->SetBranchAddress("y_final",          &y_final     );
+    t->SetBranchAddress("dy",               &dy          );
 
 
     TString outfilename = Form(
@@ -259,60 +263,56 @@ void readTree(
 
     Long64_t nentries = t->GetEntries();
 
-    int current_evt = -1;
     int baryon_count_evt = 0;
 
     for (Long64_t i = 0; i < nentries; ++i) {
         t->GetEntry(i);
 
         // ---- event change ----
-        if (evt != current_evt) {
-            if (current_evt >= 0) {
-                //h_baryon_per_evt->Fill(baryon_count_evt);
-            }
-            current_evt = evt;
+        for (int j=0;j<Mult;j++) {
             baryon_count_evt = 0;
 
             h_b->Fill(b);
-            if (isProton) {
-                h_NcollP->Fill(Ncoll);
+            if (isProton->at(j) == 1) {
+                h_NcollP->Fill(Ncoll->at(j));
             } else {
-                h_NcollN->Fill(Ncoll);
+                h_NcollN->Fill(Ncoll->at(j));
             }
 
-            h_Ncoll->Fill(Ncoll);
-            h_Npart->Fill(Npart);
-            h_Ncoll_b->Fill(b, Ncoll);
-        }
+            h_Ncoll->Fill(Ncoll->at(j));
+            h_Ncoll_b->Fill(b, Ncoll->at(j));
+            baryon_count_evt++;
 
-        baryon_count_evt++;
+            // ---- Level-2 ----
+            h_dNdy->Fill(y_final->at(j));
+            h_dNdy_over_Nw->Fill(y_final->at(j));
+            //h_y_isProjectile->Fill(y_final->at(j), isProjectile->at(j));
 
+            if (isProton->at(j) == 1) h_dNdyP->Fill(y_final->at(j));
 
-        // ---- Level-2 ----
-        h_dNdy->Fill(y_final);
-        h_dNdy_over_Nw->Fill(y_final);
-        //h_y_isProjectile->Fill(y_final, isProjectile);
-        if (isProton) h_dNdyP->Fill(y_final);
+            if (isProjectile->at(j) == 1) {
+                h_dNdyA->Fill(y_final->at(j));
 
-        if (isProjectile) {
-            h_dNdyA->Fill(y_final);
-
-            if (isProton) {
-                h_dNdyAP->Fill(y_final);
+                if (isProton->at(j) == 1) {
+                    h_dNdyAP->Fill(y_final->at(j));
+                } else {
+                    h_dNdyAN->Fill(y_final->at(j));
+                }
             } else {
-                h_dNdyAN->Fill(y_final);
+                h_dNdyB->Fill(y_final->at(j));
             }
-        } else {
-            h_dNdyB->Fill(y_final);
-        }
 
-        // ---- Level-3 ----
-        h_dy->Fill(dy);
+            // ---- Level-3 ----
+            h_dy->Fill(dy->at(j));
 
-        if (isProjectile) {
-            //h_dy_proj->Fill(dy);
-            p_dy_Ncoll->Fill(Ncoll, dy);
+            if (isProjectile->at(j) == 1) {
+                //h_dy_proj->Fill(dy);
+                p_dy_Ncoll->Fill(Ncoll->at(j), dy->at(j));
+            }
         }
+        h_Npart->Fill(Npart);
+
+
     }
 
     // last event

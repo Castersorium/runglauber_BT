@@ -13,3 +13,6 @@ tree_*
 ~$*
 
 .vscode
+*.root
+BT/rapidity_dNdy/dNdy_Au197pnHFB14Au197pnHFB14_62p4_STAR_alpha3.00_cent0.0_80.0.root
+BT/rapidity_dNdy/dNdy_Au197pnHFB14Au197pnHFB14_62p4_STAR_alpha4.00_cent0.0_80.0.root

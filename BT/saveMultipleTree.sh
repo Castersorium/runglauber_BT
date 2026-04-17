@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# You may:
+# sed -i 's/\r$//' saveMultipleTree.sh
+# first before run this script
+
 set -e
 
 # ================= User control =================
